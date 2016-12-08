@@ -1,3 +1,7 @@
+--[[
+	BOL panel. Shows the exclamation image and opens a new frame with the BOL text inside.
+]]--
+
 local PANEL = {}
 
 function PANEL:Init()

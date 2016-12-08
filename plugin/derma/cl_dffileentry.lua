@@ -1,3 +1,7 @@
+--[[
+    Main frame for adding a Civil record (for Civil Protection).
+]]--
+
 local PLUGIN = PLUGIN;
 
 local PANEL = {}

@@ -1,3 +1,7 @@
+--[[
+	This is the button that appears at the bottom of one their datafile. Main functions are run from this.
+]]--
+
 local PLUGIN = PLUGIN;
 
 local PANEL = {}
@@ -8,7 +12,7 @@ function PANEL:Init()
 	self.MainButton = vgui.Create("DImageButton", self);
 	self.MainButton:SetImage("icon16/add.png");
 	self.MainButton:SetSize(16, 16);
-	self.MainButton:SetPos(300-16, 5);
+	self.MainButton:SetPos(284, 5);
 end;
 
 

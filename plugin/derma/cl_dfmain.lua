@@ -1,3 +1,7 @@
+--[[
+	Panel for the fancy top labels and its contents.
+]]--
+
 local PANEL = {};
 
 function PANEL:Init()

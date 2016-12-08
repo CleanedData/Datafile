@@ -1,3 +1,7 @@
+--[[
+    Same as dfCivilEntry, except that it's just for the notes and medical categories.
+]]--
+
 local PLUGIN = PLUGIN;
 
 local PANEL = {}

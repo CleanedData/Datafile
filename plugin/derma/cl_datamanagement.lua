@@ -1,3 +1,7 @@
+--[[
+    Data management panel. Manage player their datafiles, remove entries.
+]]--
+
 local PLUGIN = PLUGIN;
 
 local PANEL = {}
@@ -62,6 +66,7 @@ function PANEL:Populate(target, dfTarget)
     self.Delete.DoClick = function()
         local key = self.List:GetSelectedLine();
 
+        -- Check if the key exists. If it does, remove the key and call RemoveEntry.
         if (key == nil) then
             return false
         else

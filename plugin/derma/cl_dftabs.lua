@@ -1,3 +1,8 @@
+--[[
+	It's like the Berlin wall, but then there would be 3. Allows for having 3 categories
+	to have the dfActivityNote in. Categories are scroll panels.
+]]--
+
 local PANEL = {};
 
 function PANEL:Init()

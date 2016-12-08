@@ -1,3 +1,7 @@
+--[[
+	BOL entry frame.
+]]--
+
 local PLUGIN = PLUGIN;
 
 local PANEL = {}

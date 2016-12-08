@@ -1,3 +1,7 @@
+--[[
+	Main Datafile frame. Everything is then parented onto this.
+]]--
+
 local Clockwork = Clockwork;
 local PLUGIN = PLUGIN;
 
@@ -9,7 +13,11 @@ function PANEL:Init()
 	self:MakePopup();
 end;
 
+-- Main population function. Gets the datafile and target, populates its children with all the data.
 function PANEL:Populate(target, dfTarget)
+	self:SetTitle(target:Nick() .. "'s Datafile");
+
+	// Show the BOL button if the player has a BOL.
 	if (dfTarget.bol[1] == true) then
 		local BolButton = vgui.Create("dfBol", self);
 		BolButton:Populate(target, dfTarget);
@@ -17,12 +25,12 @@ function PANEL:Populate(target, dfTarget)
 
 	local totalPoints = 0;
 
+	// Count the total points a player has.
 	for k, v in pairs(dfTarget.datafile) do
 		totalPoints = totalPoints + tonumber(v.points);
 	end;
 
-	self:SetTitle(target:Nick() .. "'s Datafile");
-    self.Generic = vgui.Create("dfGenericInfo", self);
+	self.Generic = vgui.Create("dfGenericInfo", self);
     self.topLabels = vgui.Create("dfTopLabels", self);
 
 	local leftTop = vgui.Create("dfGenericLabel", self.Generic.LeftPanel);
@@ -54,6 +62,7 @@ function PANEL:Populate(target, dfTarget)
     local mainbutton = vgui.Create("dfButton", self);
     mainbutton:Populate(target);
 
+	// Loop through all the notes in someone their datafile, add a dfActivityNote for every note.
 	for k, v in pairs(dfTarget.datafile) do
 		if (dfTarget.datafile[k].category == "note") then
 			local note = vgui.Create("dfActivityNote", self.centerBars.LeftPanel);
@@ -83,31 +92,5 @@ function PANEL:Populate(target, dfTarget)
 		end;
 	end;
 end;
-
-/*
-// https://facepunch.com/showthread.php?t=1464767
-local blur = Material("pp/blurscreen")
-local function DrawBlur(panel, amount)
-	local x, y = panel:LocalToScreen(0, 0)
-	local scrW, scrH = ScrW(), ScrH()
-	surface.SetDrawColor(255, 255, 255)
-	surface.SetMaterial(blur)
-	for i = 1, 3 do
-		blur:SetFloat("$blur", (i / 3) * (amount or 6))
-		blur:Recompute()
-		render.UpdateScreenEffectTexture()
-		surface.DrawTexturedRect(x * -1, y * -1, scrW, scrH)
-	end
-end
-
-function PANEL:Paint(w, h)
-	DrawBlur(self, 1)
-
-	surface.SetDrawColor(0, 50, 255, 1);
-	surface.DrawRect(0, 0, w, h);
-
-	surface.SetDrawColor( Color( 0, 125, 255, 100 ) )
-	surface.DrawOutlinedRect( 0, 0, w, h )
-end;*/
 
 vgui.Register("dfMain", PANEL, "DFrame");

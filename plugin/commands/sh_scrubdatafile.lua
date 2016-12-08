@@ -8,18 +8,9 @@ COMMAND.arguments = 1;
 
 function COMMAND:OnRun(player, arguments)
     local target = Clockwork.player:FindByID(table.concat(arguments, " "));
-  
-    if (target) then
-        local dfPlayer = {
-            bol = {false, ""},
-            civilStatus = "Citizen",
-            tier = "None",
-            cid = math.random(0, 99999),
-            lastSeen = {"", ""},
-            datafile = {},
-        };
 
-        player:SetCharacterData("dfMain", dfPlayer);
+    if (target) then
+        PLUGIN:ScrubDatafile(target);
     else
         Clockwork.player:Notify(player, "You have entered an invalid character.");
     end;

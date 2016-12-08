@@ -1,3 +1,8 @@
+--[[
+	Handles the note of someone their datafile. RichText for the note text, DLabel for the date,
+	DLabel for the author's nick, DLabel for a player their points.
+]]--
+
 local PANEL =  {};
 
 function PANEL:Init()
@@ -39,6 +44,7 @@ function PANEL:Init()
 	self.Points:DockMargin(0, 0, 0, 0);
 end;
 
+// Bunch of functions to be able to edit the many elements of the dfActivityNote.
 function PANEL:SetDateText(date)
 	self.Date:SetText(date);
 end;
