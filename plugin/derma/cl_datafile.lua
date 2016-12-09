@@ -52,6 +52,7 @@ function PANEL:Populate(target, dfTarget)
 		rightTop:SetLeftColor(Color(190, 27, 72))
 	end;
 	rightTop:SetLeftText(totalPoints);
+	rightTop:SetRightText("");
 
 	local rightBottom = vgui.Create("dfGenericLabel", self.Generic.RightPanel);
 	rightBottom:SetGenericText("LAST SEEN");

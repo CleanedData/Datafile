@@ -4,7 +4,7 @@ local PLUGIN = PLUGIN;
 
 -- Called when a player spawns, sets their datafile table up (dfMain).
 function PLUGIN:PostPlayerSpawn(player)
-    if (player:GetCharacterData("dfMain") == nil) then
+    if (player:GetCharacterData("dfMain") == nil && !table:HasValue(PLUGIN.NoDatafile, player:GetFaction())) then
         local dfPlayer = {
             bol = {false, ""},
             civilStatus = "Citizen",
@@ -62,7 +62,7 @@ function PLUGIN:UpdateCivilStatus(target, civilStatus, author)
 
     target:SetCharacterData("dfMain", dfPlayer);
 
-    PLUGIN:AddEntry(target, "note", auhtor:Nick() .. " has set " .. target:Nick() .. "'s Civil Status to " .. civilStatus .. ".", 0, author)
+    PLUGIN:AddEntry(target, "note", author:Nick() .. " has set " .. target:Nick() .. "'s Civil Status to " .. civilStatus .. ".", 0, author)
 end;
 
 -- Updates the time a player has been last seen.
@@ -99,7 +99,7 @@ function PLUGIN:RemoveBOL(target, author)
 
     target:SetCharacterData("dfMain", dfPlayer);
 
-    PLUGIN:AddEntry(target, "note", player:Nick() .. " has removed a BOL from " .. target:Nick() .. ".", 0, author)
+    PLUGIN:AddEntry(target, "note", author:Nick() .. " has removed a BOL from " .. target:Nick() .. ".", 0, author)
 end;
 
 -- Scrub a player their entire datafile.

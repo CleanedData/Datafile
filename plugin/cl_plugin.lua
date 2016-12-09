@@ -46,6 +46,10 @@ function PLUGIN:ChangeCivilStatus(target, civilStatus)
     Clockwork.datastream:Start("UpdateCivilStatus", {target, civilStatus});
 end;
 
+function PLUGIN:MultiStringRequest(title, text)
+
+end;
+
 Clockwork.datastream:Hook("RefreshDataFile", function(data)
     local target = data[1];
     local file = data[2];

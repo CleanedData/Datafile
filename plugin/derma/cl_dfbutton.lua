@@ -46,8 +46,8 @@ function PANEL:Populate(target)
         self.BOL = self.Menu:AddSubMenu("BOL");
 
         self.BOL:AddOption("Add BOL", function()
-			local bolEntry = vgui.Create("dfBolEntry");
-			bolEntry:Populate(target);
+			self.bolEntry = vgui.Create("dfBolEntry");
+			self.bolEntry:Populate(target);
         end):SetImage("icon16/add.png");
 
         self.BOL:AddOption("Remove BOL", function()
@@ -59,13 +59,14 @@ function PANEL:Populate(target)
         self.Tier = self.Menu:AddSubMenu("Set Status");
 
         self.Tier:AddOption("Anti-Citizen", function()
-			PLUGIN:UpdateCivilStatus(target, "Anti-Citizen");
+			PLUGIN:ChangeCivilStatus(target, "Anti-Citizen");
+			
         end):SetImage("icon16/box.png");
 
         self.Tier:AddSpacer();
 
         self.Tier:AddOption("Citizen", function()
-			PLUGIN:UpdateCivilStatus(target, "Citizen");
+			PLUGIN:ChangeCivilStatus(target, "Citizen");
 
         end):SetImage("icon16/user.png");
 
