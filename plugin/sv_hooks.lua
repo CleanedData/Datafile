@@ -86,7 +86,7 @@ function PLUGIN:AddBOL(target, text, author)
 
     target:SetCharacterData("dfMain", dfPlayer);
 
-    PLUGIN:AddEntry(target, "note", player:Nick() .. " has put a BOL on " .. target:Nick() .. ".", 0, author)
+    PLUGIN:AddEntry(target, "note", auhtor:Nick() .. " has put a BOL on " .. target:Nick() .. ".", 0, author)
 end;
 
 -- Remove a BOL, insert a note.
