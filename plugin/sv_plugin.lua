@@ -27,7 +27,7 @@ PLUGIN.Permissions = {
     },
 };
 
-// Factions that do not get access to the datafile & factions that don't get a datafile.
+// Factions that do not get access to the datafile & factions that do not get a datafile.
 PLUGIN.RestrictedFactions = {
     "Alien Grunt",
     "Bird",
@@ -64,8 +64,37 @@ function PLUGIN:HasDatafile(player)
     return bHasDatafile;
 end;
 
+// Update the player their datafile.
 function PLUGIN:UpdateDatafile(player, fileTable)
+    /* Datafile structure:
+        table to JSON encoded with CW function:
+        datafile = {
+            bol = {false, ""},
+            civilStatus = "";
+            lastSeen = "";
+            entries = {
+                entries[k] = {
+                    type = "", // med, union, civil
+                    text = "",
+                    date = "",
+                    points = "",
+                    poster = "",
+                },
+            },
+        };
+    */
 
+    local schemaFolder = Clockwork.kernel:GetSchemaFolder();
+    local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
+    local character = player:GetCharacter();
+
+    local queryObj = Clockwork.database:Update(datafileTable);
+        queryObj:AddWhere("_CharacterID = ?", character.id);
+        queryObj:AddWhere("_SteamID = ?", player:SteamID());
+        queryObj:AddWhere("_Schema = ?", schemaFolder);
+        queryObj:SetValue("_CharacterName", character.name);
+        queryObj:SetValue("_Datafile", Clockwork.json:Encode(fileTable));
+    queryObj:Push();
 end;
 
 // If the player is apart of any of the factions within PLUGIN.RestrictedFactions, return true.
