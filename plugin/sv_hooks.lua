@@ -62,4 +62,18 @@ function PLUGIN:HandleDatafile(player, target)
     check if the player can see restricted files
     stuff like that
     */
+
+    local playerPermission, playerValue = PLUGIN:ReturnPermission(player);
+    local targetPermission, targetValue = PLUGIN:ReturnPermission(target);
+
+    if (playerValue >= targetValue) then
+        -- allow
+
+    elseif (playerValue < targetValue) then
+        -- don't allow
+        -- "you do not have permission to access this datafile"
+    elseif (bTargetIsRestricted && playerValue < 3) then
+        -- don't allow
+        -- "this datafile is restricted; access is not granted"
+    end;
 end;

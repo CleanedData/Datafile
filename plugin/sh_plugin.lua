@@ -6,7 +6,7 @@ Clockwork.kernel:IncludePrefixed("sv_plugin.lua");
 Clockwork.kernel:IncludePrefixed("sv_hooks.lua");
 
 // All the categories possible.
-PLUGIN.Categories = {
+PLUGIN.Types = {
     "med",      // Medical note.
     "union",    // Union (CWU, WI, UP) type note.
     "civil",    // Civil Protection/CTA type note.

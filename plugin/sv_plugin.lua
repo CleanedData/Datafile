@@ -95,6 +95,41 @@ function PLUGIN:ReturnBOL(player)
     end;
 end;
 
+function PLUGIN:ReturnPermission(player)
+    local faction = player:GetFaction();
+    local permission;
+
+    for k, v in pairs(PLUGIN.Permissions) do
+        for l, q in pairs(PLUGIN.Permissions[k]) do
+            if (faction == q) then
+                permission = k;
+
+                if (permission == "elevated") then
+                    return permission, 4;
+
+                elseif (permission == "full") then
+                    return permission, 3;
+
+                elseif (permission == "medium") then
+                    return permission, 2;
+
+                elseif (permission = "minor") then
+                    return permission, 1;
+                end;
+            end;
+        end;
+    end;
+
+    return "none", 0;
+end;
+
+function PLUGIN:CanUseDatafile(player)
+    local faction = player:GetFaction();
+
+
+    return
+end;
+
 function PLUGIN:IsRestricted(player)
     return bIsRestricted;
 end;
