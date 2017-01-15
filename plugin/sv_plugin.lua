@@ -3,7 +3,7 @@ local PLUGIN = PLUGIN;
 Clockwork.config:Add("mysql_datafile_table", "datafile", nil, nil, true, true, true);
 
 // Update the player their datafile.
-function PLUGIN:UpdateDatafile(player, GenericData, Datafile)
+function PLUGIN:UpdateDatafile(player, GenericData, datafile)
     /* Datafile structure:
         table to JSON encoded with CW function:
         _GenericData = {
@@ -33,68 +33,147 @@ function PLUGIN:UpdateDatafile(player, GenericData, Datafile)
         queryObj:AddWhere("_Schema = ?", schemaFolder);
         queryObj:SetValue("_CharacterName", character.name);
         queryObj:SetValue("_GenericData", Clockwork.json:Encode(GenericData));
-        queryObj:SetValue("_Datafile", Clockwork.json:Encode(Datafile));
+        queryObj:SetValue("_Datafile", Clockwork.json:Encode(datafile));
     queryObj:Push();
+
+    PLUGIN:LoadDatafile();
 end;
 
-function PLUGIN:ReturnGenericData(player)
-    -- return _GenericData in table format, no JSON
-
-
-end;
-
-function PLUGIN:ReturnDatafile(player)
-    -- return _Datafile in table format, no JSON
-end;
-
-function PLUGIN:AddEntry(category, text, date, points, player, poster)
-    -- add a new entry to the _Datafile
+// Add a new entry. bCommand is used to prevent logging when /AddEntry is used.
+function PLUGIN:AddEntry(category, text, points, player, poster, bCommand)
     --Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has added an entry to " .. player:Name() .. "'s datafile with category: " .. category);
+    if (!table.HasValue(PLUGIN.Categories, category)) then return; end;
+    if (PLUGIN:ReturnPermission(poster) <= 1 && category == "civil") then return; end;
 
+    local GenericData = PLUGIN:ReturnGenericData(player);
+    local datafile = PLUGIN:ReturnDatafile(player);
+    local tableSize = PLUGIN:ReturnDatafileSize();
+
+    currentDatafile[tableSize + 1] = {
+        category = category,
+        text = text,
+        date = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
+        points = points,
+        poster = {
+            charName = poster:GetCharacter().name,
+            steamID = poster:SteamID(),
+        },
+    };
+
+    PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
+// Set a player their Civil Status.
 function PLUGIN:SetCivilStatus(player, poster, civilStatus)
-    -- set the player their civil status
     --Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
+    if (!table.HasValue(PLUGIN.CivilStatus, civilStatus)) then return; end;
+    if (PLUGIN:ReturnPermission(poster) <= 1) then return; end;
 
+    local GenericData = PLUGIN:ReturnGenericData(player);
+    local datafile = PLUGIN:ReturnDatafile(player);
+    GenericData.civilStatus = civilStatus;
+
+    PLUGIN:AddEntry("union", poster:GetCharacter().name .. " has changed " .. player:GetCharacter().name .. "'s Civil Status to: " .. civilStatus, 0, player, poster);
+    PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
+// Scrub a player their datafile.
 function PLUGIN:ScrubDatafile(player)
     -- scrub datafile
+    -- DROP TABLE datafile ayy lmao
 end;
 
+// Edit an entry.
 function PLUGIN:EditEntry(player, entry)
     -- edit an entry
 end;
 
+// Update the time a player has last been seen.
 function PLUGIN:UpdateLastSeen(player, seeer)
-    -- update the last seen (seeer = see-er);
+    local GenericData = PLUGIN:ReturnGenericData(player);
+    local datafile = PLUGIN:ReturnDatafile(player);
+    GenericData.lastSeen = os.date("%H:%M:%S - %d/%m/%Y", os.time());
+
+    PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
-function PLUGIN:SetBOL(bBOL, text)
+// Enable or disable a BOL on the player.
+function PLUGIN:SetBOL(bBOL, text, player, poster)
+    if (PLUGIN:ReturnPermission(poster) <= 1) then return; end;
+
+    local GenericData = PLUGIN:ReturnGenericData(player);
+    local datafile = PLUGIN:ReturnDatafile(player);
+
     if (bBOL) then
         -- add the BOL with the text
+        GenericData.bol[1] = true;
+        GenericData.bol[2] = text;
+
+        PLUGIN:AddEntry("union", poster:GetCharacter().name .. " has put a bol on " .. player:GetCharacter().name, 0, player, poster);
+
     else
-        -- remove the BOL, set text to ""
+        GenericData.bol[1] = false;
+        GenericData.bol[2] = "";
+
+        PLUGIN:AddEntry("union", poster:GetCharacter().name .. " has removed a bol on " .. player:GetCharacter().name, 0, player, poster);
     end;
+
+    PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
-function PLUGIN:SetRestricted(bRestricted, text)
+// Make the file of a player restricted or not.
+function PLUGIN:SetRestricted(bRestricted, text, player, poster)
+    if (PLUGIN:ReturnPermission(poster) <= 3) then return; end;
+
+    local GenericData = PLUGIN:ReturnGenericData(player);
+    local datafile = PLUGIN:ReturnDatafile(player);
+
     if (bRestricted) then
         -- make the file restricted with the text
+        GenericData.restricted[1] = true;
+        GenericData.restricted[2] = text;
+
+        PLUGIN:AddEntry("civil", poster:GetCharacter().name .. " has made " .. player:GetCharacter().name .. "'s file restricted.", 0, player, poster);
     else
         -- make the file unrestricted, set text to ""
+        GenericData.restricted[1] = false;
+        GenericData.restricted[2] = "";
+
+        PLUGIN:AddEntry("civil", poster:GetCharacter().name .. " has removed the restriction on " .. player:GetCharacter().name .. "'s file.", 0, player, poster);
     end;
+
+    PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
+// Return _GenericData in normal table format.
+function PLUGIN:ReturnGenericData(player)
+    return player:GetCharacter().file.GenericData;
+end;
+
+// Return _Datafile in normal table format.
+function PLUGIN:ReturnDatafile(player)
+    return player:GetCharacter().file.Datafile;
+end;
+
+// Return the size of _Datafile. Used to calculate what key the next entry should be.
+function PLUGIN:ReturnDatafileSize(player)
+    return #player:GetCharacter().file.Datafile;
+end;
+
+// Return the BOL of a player.
 function PLUGIN:ReturnBOL(player)
+    local GenericData = PLUGIN:ReturnGenericData();
+    local bHasBOL = GenericData.bol[1];
+    local BOLText = GenericData.bol[2];
+
     if (bHasBOL) then
         return true, BOLText;
     else
-        return false
+        return false, "";
     end;
 end;
 
+// Return the permission of a player. The higher, the more privileges.
 function PLUGIN:ReturnPermission(player)
     local faction = player:GetFaction();
     local permission;
@@ -105,33 +184,28 @@ function PLUGIN:ReturnPermission(player)
                 permission = k;
 
                 if (permission == "elevated") then
-                    return permission, 4;
+                    return 4;
 
                 elseif (permission == "full") then
-                    return permission, 3;
+                    return 3;
 
                 elseif (permission == "medium") then
-                    return permission, 2;
+                    return 2;
 
-                elseif (permission = "minor") then
-                    return permission, 1;
+                elseif (permission == "minor") then
+                    return 1;
+
+                elseif (permission == "none") then
+                    return 0;
                 end;
             end;
         end;
     end;
-
-    return "none", 0;
 end;
 
-function PLUGIN:CanUseDatafile(player)
-    local faction = player:GetFaction();
-
-
-    return
-end;
-
+// Returns if the player their file is restricted or not, and the text if it is.
 function PLUGIN:IsRestricted(player)
-    return bIsRestricted;
+    return player:GetCharacter().file.GenericData.bol[1], player::GetCharacter().file.GenericData.bol[2];
 end;
 
 // If the player is apart of any of the factions within PLUGIN.RestrictedFactions, return true.

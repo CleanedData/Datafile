@@ -6,7 +6,7 @@ Clockwork.kernel:IncludePrefixed("sv_plugin.lua");
 Clockwork.kernel:IncludePrefixed("sv_hooks.lua");
 
 // All the categories possible.
-PLUGIN.Types = {
+PLUGIN.Categories = {
     "med",      // Medical note.
     "union",    // Union (CWU, WI, UP) type note.
     "civil",    // Civil Protection/CTA type note.
@@ -19,17 +19,22 @@ PLUGIN.Permissions = {
     },
     full = {
         "Combine Transhuman Arm",
+        "Overwatch Transhuman Arm",
+        "Administrator",
         "Civil Administration Board",
-        "Civil Protection",
+        "Metropolice Force",
     },
     medium = {
-        "Server Administration"
+        "Server Administration",
     },
     minor = {
         "Civil Worker's Union",
         "Willard Industries",
         "Unity Party",
     },
+    none = {
+        "Citizen",
+    }
 };
 
 // Factions that do not get access to the datafile & factions that do not get a datafile.
@@ -40,4 +45,16 @@ PLUGIN.RestrictedFactions = {
     "Vortigaunt",
     "Zombie",
     "Houndeye"
+};
+
+PLUGIN.CivilStatus = {
+    "Anti-Citizen",
+    "Citizen",
+    "Brown",
+    "Red",
+    "Blue",
+    "Green",
+    "White",
+    "Gold",
+    "Platinum",
 };

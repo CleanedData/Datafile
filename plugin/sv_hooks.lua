@@ -27,27 +27,71 @@ function PLUGIN:PostPlayerSpawn(player)
     if ((!bHasDatafile || bHasDatafile == nil) && !PLUGIN:IsRestrictedFaction(player)) then
         PLUGIN:CreateDatafile(player);
     end;
+
+    PLUGIN:LoadDatafile(player);
+end;
+
+function PLUGIN:LoadDatafile(player)
+    local schemaFolder = Clockwork.kernel:GetSchemaFolder();
+    local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
+    local character = player:GetCharacter();
+
+    local queryObj = Clockwork.database:Select(datafileTable);
+        queryObj:AddWhere("_CharacterID = ?", character.characterID);
+        queryObj:AddWhere("_SteamID = ?", player:SteamID());
+        queryObj:AddWhere("_Schema = ?", schemaFolder);
+        queryObj:SetCallback(function(result)
+            if (!IsValid(player)) then return; end;
+
+            if (Clockwork.database:IsResult(result)) then
+                PrintTable(result)
+                character.file = {
+                    GenericData = Clockwork.json:Decode(result[1]._GenericData);
+                    Datafile = Clockwork.json:Decode(result[1]._Datafile);
+                };
+            end;
+        end);
+
+    queryObj:Pull();
 end;
 
 // Create a datafile for the player.
 function PLUGIN:CreateDatafile(player)
-    local schemaFolder = Clockwork.kernel:GetSchemaFolder();
-    local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
-    local character = player:GetCharacter();
-    local steamID = player:SteamID();
+    if (player) then
+        local schemaFolder = Clockwork.kernel:GetSchemaFolder();
+        local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
+        local character = player:GetCharacter();
+        local steamID = player:SteamID();
+        local defaultGenericData = {
+            bol = {false, ""},
+            restricted = {false, ""},
+            civilStatus = "Citizen",
+            lastSeen = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
+        };
 
-    // Set all the values.
-    local queryObj = Clockwork.database:Insert(datafileTable);
-        queryObj:SetValue("_CharacterID", character.characterID);
-        queryObj:SetValue("_CharacterName", character.name);
-        queryObj:SetValue("_SteamID", steamID);
-        queryObj:SetValue("_Schema", schemaFolder);
-        queryObj:SetValue("_GenericData", "");
-        queryObj:SetValue("_Datafile", "");
-    queryObj:Push();
+        local defaultDatafile = {
+            [1] = {
+                category = "union", // med, union, civil
+                text = "INITIATED INTO WORKFORCE.",
+                date = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
+                points = "0",
+                poster = {"Overwatch", "BOT"},
+            },
+        };
 
-    // Change the hasDatafile bool to true to indicate the player has a datafile now.
-    player:SetCharacterData("hasDatafile", true);
+        // Set all the values.
+        local queryObj = Clockwork.database:Insert(datafileTable);
+            queryObj:SetValue("_CharacterID", character.characterID);
+            queryObj:SetValue("_CharacterName", character.name);
+            queryObj:SetValue("_SteamID", steamID);
+            queryObj:SetValue("_Schema", schemaFolder);
+            queryObj:SetValue("_GenericData", Clockwork.json:Encode(defaultGenericData));
+            queryObj:SetValue("_Datafile", Clockwork.json:Encode(defaultDatafile));
+        queryObj:Push();
+
+        // Change the hasDatafile bool to true to indicate the player has a datafile now.
+        player:SetCharacterData("hasDatafile", true);
+    end;
 end;
 
 // Returns true if the player has a datafile.
@@ -56,24 +100,22 @@ function PLUGIN:HasDatafile(player)
 end;
 
 function PLUGIN:HandleDatafile(player, target)
-    /*
-    bunch of pseudo logic right here
-    check if the player is authorized to use th other player their datafile
-    check if the player can see restricted files
-    stuff like that
-    */
+    local playerValue = PLUGIN:ReturnPermission(player);
+    local targetValue = PLUGIN:ReturnPermission(target);
+    local bTargetIsRestricted, restrictedText = PLUGIN:IsRestricted(player);
 
-    local playerPermission, playerValue = PLUGIN:ReturnPermission(player);
-    local targetPermission, targetValue = PLUGIN:ReturnPermission(target);
+    print(playerValue, targetValue)
 
     if (playerValue >= targetValue) then
         -- allow
+        Clockwork.player:Notify(player, "Yes.");
 
     elseif (playerValue < targetValue) then
         -- don't allow
-        -- "you do not have permission to access this datafile"
+        Clockwork.player:Notify(player, "You are not authorized to access this datafile.");
+
     elseif (bTargetIsRestricted && playerValue < 3) then
         -- don't allow
-        -- "this datafile is restricted; access is not granted"
+        Clockwork.player:Notify(player, "This datafile has been restricted; access denied. REASON: " + restrictedText);
     end;
 end;

@@ -11,7 +11,13 @@ function COMMAND:OnRun(player, arguments)
     local target = Clockwork.player:FindByID(table.concat(arguments, " "));
 
     if (target) then
-        PLUGIN:HandleDatafile(player, target)
+        if (PLUGIN:IsRestrictedFaction(target)) then
+            Clockwork.player:Notify(player, "This datafile does not exist.");
+        else
+            PLUGIN:HandleDatafile(player, target)
+        end;
+    else
+        Clockwork.player:Notify(player, "This datafile does not exist.");
     end;
 end;
 
