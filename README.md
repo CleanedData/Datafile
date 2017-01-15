@@ -21,7 +21,7 @@ _GenericData = {
 This is just a massive table. Every entry is inside. It has information about the category, the text, the date, points (if applicable) and the poster his character name and Steam ID for validation purposes.
 ```
 _Datafile = {
-    entries[k] = {
+    [k] = {
         category = "", // med, union, civil
         text = "",
         date = "",
