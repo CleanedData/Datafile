@@ -99,17 +99,30 @@ function PLUGIN:HasDatafile(player)
     return player:GetCharacterData("hasDatafile");
 end;
 
+// Datafile handler. Decides what to do when a player types /Datafile John Doe.
 function PLUGIN:HandleDatafile(player, target)
     local playerValue = PLUGIN:ReturnPermission(player);
     local targetValue = PLUGIN:ReturnPermission(target);
     local bTargetIsRestricted, restrictedText = PLUGIN:IsRestricted(player);
 
-    print(playerValue, targetValue)
-
     if (playerValue >= targetValue) then
         -- allow
-        Clockwork.player:Notify(player, "Yes.");
+        local GenericData = PLUGIN:ReturnGenericData(target);
+        local datafile = PLUGIN:ReturnDatafile(target);
 
+        if (playerValue == 1) then
+            -- allow but strip Civil records, don't show BOL buttons, don't show stuff like that yes
+            for k, v in pairs(datafile) do
+                if (v.category == "civil") then
+                    table.remove(datafile, k);
+                end;
+            end;
+
+            Clockwork.datastream:Start("createUnionDatafile", {target, GenericData, datafile});
+        else
+            -- allow, show everything
+            Clockwork.datastream:Start("createCivilDatafile", {target, GenericData, datafile});
+        end;
     elseif (playerValue < targetValue) then
         -- don't allow
         Clockwork.player:Notify(player, "You are not authorized to access this datafile.");

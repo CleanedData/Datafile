@@ -145,6 +145,15 @@ function PLUGIN:SetRestricted(bRestricted, text, player, poster)
     PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
+function PLUGIN:ReturnPoints(player)
+    local datafile = PLUGIN:ReturnDatafile(player);
+    local points = 0;
+
+    for k, v in pairs(datafile) do
+        points = points + tonumber(v.points);
+    end;
+end;
+
 // Return _GenericData in normal table format.
 function PLUGIN:ReturnGenericData(player)
     return player:GetCharacter().file.GenericData;
@@ -205,7 +214,11 @@ end;
 
 // Returns if the player their file is restricted or not, and the text if it is.
 function PLUGIN:IsRestricted(player)
-    return player:GetCharacter().file.GenericData.bol[1], player::GetCharacter().file.GenericData.bol[2];
+    local GenericData = PLUGIN:ReturnGenericData(player);
+    local bIsRestricted = GenericData.restricted[1];
+    local restrictedText = GenericData.restricted[2];
+
+    return bIsRestricted, restrictedText;
 end;
 
 // If the player is apart of any of the factions within PLUGIN.RestrictedFactions, return true.
