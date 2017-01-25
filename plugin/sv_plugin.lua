@@ -18,7 +18,7 @@ function PLUGIN:UpdateDatafile(player, GenericData, datafile)
                 text = "",
                 date = "",
                 points = "",
-                poster = {charName, steamID},
+                poster = {charName, steamID, color},
             },
         };
     */
@@ -57,6 +57,7 @@ function PLUGIN:AddEntry(category, text, points, player, poster, bCommand)
         poster = {
             charName = poster:GetCharacter().name,
             steamID = poster:SteamID(),
+            color = team.GetColor(poster:Team()),
         },
     };
 
