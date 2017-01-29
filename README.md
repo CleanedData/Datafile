@@ -1,3 +1,5 @@
+![alt tag](http://imgur.com/RteTEoC.png)
+
 # Datafile: Character Management
 A plugin that allows factions to manage a character their personal file.
 
