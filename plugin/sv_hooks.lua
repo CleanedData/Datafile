@@ -32,7 +32,6 @@ function PLUGIN:PostPlayerSpawn(player)
 end;
 
 function PLUGIN:LoadDatafile(player)
-	print("loaddatafile")
 	local schemaFolder = Clockwork.kernel:GetSchemaFolder();
 	local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
 	local character = player:GetCharacter();
@@ -63,22 +62,6 @@ function PLUGIN:CreateDatafile(player)
 		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
 		local steamID = player:SteamID();
-		local defaultGenericData = {
-			bol = {false, ""},
-			restricted = {false, ""},
-			civilStatus = "Citizen",
-			lastSeen = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
-		};
-
-		local defaultDatafile = {
-			[1] = {
-				category = "union", // med, union, civil
-				text = "INITIATED INTO WORKFORCE.",
-				date = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
-				points = "0",
-				poster = {"Overwatch", "BOT"},
-			},
-		};
 
 		// Set all the values.
 		local queryObj = Clockwork.database:Insert(datafileTable);
@@ -86,8 +69,8 @@ function PLUGIN:CreateDatafile(player)
 			queryObj:SetValue("_CharacterName", character.name);
 			queryObj:SetValue("_SteamID", steamID);
 			queryObj:SetValue("_Schema", schemaFolder);
-			queryObj:SetValue("_GenericData", Clockwork.json:Encode(defaultGenericData));
-			queryObj:SetValue("_Datafile", Clockwork.json:Encode(defaultDatafile));
+			queryObj:SetValue("_GenericData", Clockwork.json:Encode(PLUGIN.Default.GenericData));
+			queryObj:SetValue("_Datafile", Clockwork.json:Encode(PLUGIN.Default.civilianDatafile));
 		queryObj:Push();
 
 		// Change the hasDatafile bool to true to indicate the player has a datafile now.
@@ -133,11 +116,44 @@ function PLUGIN:HandleDatafile(player, target)
 	end;
 end;
 
-
 // Datastream
-
 Clockwork.datastream:Hook("updateLastSeen", function(player, data)
-	local data = target;
+	local target = data[1];
 
-	PLUGIN:UpdateLastSeen(player, target)
+	PLUGIN:UpdateLastSeen(target);
+end);
+
+Clockwork.datastream:Hook("updateCivilStatus", function(player, data)
+	local target = data[1];
+	local civilStatus = data[2];
+
+	PLUGIN:SetCivilStatus(target, player, civilStatus);
+end);
+
+Clockwork.datastream:Hook("addEntry", function(player, data)
+	local target = data[1];
+	local category = data[2];
+	local text = data[3];
+	local points = data[4];
+
+	PLUGIN:AddEntry(category, text, points, target, player, false);
+end);
+
+Clockwork.datastream:Hook("setBOL", function(player, data)
+	local target = data[1];
+	local bHasBOL = PLUGIN:ReturnBOL(player);
+
+	if (bHasBOL) then
+		PLUGIN:SetBOL(false, "", target, player);
+	else 
+		PLUGIN:SetBOL(true, "", target, player);
+	end;
+end);
+
+Clockwork.datastream:Hook("requestPoints", function(player, data)
+	local target = data[1];
+
+	if (PLUGIN:ReturnPermission(player) == 1 && (PLUGIN:ReturnPermission(target) == 0 || PLUGIN:ReturnPermission(target) == 1)) then
+		Clockwork.datastream:Start(player, "sendPoints", {PLUGIN:ReturnPoints(target)});
+	end;
 end);

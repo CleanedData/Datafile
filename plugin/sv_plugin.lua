@@ -1,5 +1,7 @@
 local PLUGIN = PLUGIN;
 
+PLUGIN.UsingDatafile = {};
+
 Clockwork.config:Add("mysql_datafile_table", "datafile", nil, nil, true, true, true);
 
 // Update the player their datafile.
@@ -27,8 +29,13 @@ function PLUGIN:UpdateDatafile(player, GenericData, datafile)
     local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
     local character = player:GetCharacter();
 
+    print("UPDAAAAAAAAATE")
+    print(character.characterID);
+    print(schemaFolder);
+    print(player:SteamID());
+
     local queryObj = Clockwork.database:Update(datafileTable);
-        queryObj:AddWhere("_CharacterID = ?", character.id);
+        queryObj:AddWhere("_CharacterID = ?", character.characterID);
         queryObj:AddWhere("_SteamID = ?", player:SteamID());
         queryObj:AddWhere("_Schema = ?", schemaFolder);
         queryObj:SetValue("_CharacterName", character.name);
@@ -36,37 +43,45 @@ function PLUGIN:UpdateDatafile(player, GenericData, datafile)
         queryObj:SetValue("_Datafile", Clockwork.json:Encode(datafile));
     queryObj:Push();
 
-    PLUGIN:LoadDatafile();
+    PLUGIN:LoadDatafile(player);
 end;
 
 // Add a new entry. bCommand is used to prevent logging when /AddEntry is used.
 function PLUGIN:AddEntry(category, text, points, player, poster, bCommand)
-    --Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has added an entry to " .. player:Name() .. "'s datafile with category: " .. category);
     if (!table.HasValue(PLUGIN.Categories, category)) then return; end;
-    if (PLUGIN:ReturnPermission(poster) <= 1 && category == "civil") then return; end;
+    if ((PLUGIN:ReturnPermission(poster) <= 1 && category == "civil") || PLUGIN:ReturnPermission(poster) == 0) then return; end;
+    
+    Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has added an entry to " .. player:Name() .. "'s datafile with category: " .. category);
 
     local GenericData = PLUGIN:ReturnGenericData(player);
     local datafile = PLUGIN:ReturnDatafile(player);
-    local tableSize = PLUGIN:ReturnDatafileSize();
+    local tableSize = PLUGIN:ReturnDatafileSize(player);
 
-    currentDatafile[tableSize + 1] = {
+    datafile[tableSize + 1] = {
         category = category,
         text = text,
         date = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
         points = points,
         poster = {
-            charName = poster:GetCharacter().name,
-            steamID = poster:SteamID(),
-            color = team.GetColor(poster:Team()),
+            poster:GetCharacter().name,
+            poster:SteamID(),
+            team.GetColor(poster:Team()),
         },
     };
 
     PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
+function PLUGIN:AddDatafileUser(user, target)
+    local tableSize = #PLUGIN.UsingDatafile;
+
+    PLUGIN.UsingDatafile[tableSize + 1] = {user, target};
+end;
+
 // Set a player their Civil Status.
 function PLUGIN:SetCivilStatus(player, poster, civilStatus)
-    --Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
+    Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
+    
     if (!table.HasValue(PLUGIN.CivilStatus, civilStatus)) then return; end;
     if (PLUGIN:ReturnPermission(poster) <= 1) then return; end;
 
@@ -80,8 +95,7 @@ end;
 
 // Scrub a player their datafile.
 function PLUGIN:ScrubDatafile(player)
-    -- scrub datafile
-    -- DROP TABLE datafile ayy lmao
+    PLUGIN:UpdateDatafile(player, PLUGIN.Default.GenericData, PLUGIN.Default.civilianDatafile);
 end;
 
 // Edit an entry.
@@ -90,7 +104,7 @@ function PLUGIN:EditEntry(player, entry)
 end;
 
 // Update the time a player has last been seen.
-function PLUGIN:UpdateLastSeen(player, seeer)
+function PLUGIN:UpdateLastSeen(player)
     local GenericData = PLUGIN:ReturnGenericData(player);
     local datafile = PLUGIN:ReturnDatafile(player);
     GenericData.lastSeen = os.date("%H:%M:%S - %d/%m/%Y", os.time());
@@ -150,9 +164,13 @@ function PLUGIN:ReturnPoints(player)
     local datafile = PLUGIN:ReturnDatafile(player);
     local points = 0;
 
+    PrintTable(datafile)
+
     for k, v in pairs(datafile) do
         points = points + tonumber(v.points);
     end;
+
+    return points;
 end;
 
 // Return _GenericData in normal table format.
@@ -167,12 +185,12 @@ end;
 
 // Return the size of _Datafile. Used to calculate what key the next entry should be.
 function PLUGIN:ReturnDatafileSize(player)
-    return #player:GetCharacter().file.Datafile;
+    return #(player:GetCharacter().file.Datafile);
 end;
 
 // Return the BOL of a player.
 function PLUGIN:ReturnBOL(player)
-    local GenericData = PLUGIN:ReturnGenericData();
+    local GenericData = PLUGIN:ReturnGenericData(player);
     local bHasBOL = GenericData.bol[1];
     local BOLText = GenericData.bol[2];
 

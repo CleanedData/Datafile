@@ -78,21 +78,77 @@ function PANEL:PopulateDatafile(target, datafile)
 
 		if (datafile[k].category == "union") then
 			local entry = vgui.Create("cwDfEntry", self.Entries.Left);
-			entry:SetEntryText(text, date, "~ " .. poster, points, color);
-		
-		elseif (datafile[k].category == "civil") then
-			local entry = vgui.Create("cwDfEntry", self.Entries.Middle);
-			entry:SetEntryText(text, date, "~ " .. poster, points, color);
-
+			entry:SetEntryText(text, date, "~ " .. poster, 0, color);
+			
 		elseif (datafile[k].category == "med") then
 			local entry = vgui.Create("cwDfEntry", self.Entries.Right);
-			entry:SetEntryText(text, date, "~ " .. poster, points, color);
+			entry:SetEntryText(text, date, "~ " .. poster, 0, color);
 		end;
 	end;
 
-	self.dLeftButton.OnClick = function()
-		Clockwork.datastream:Start("updateLastSeen", target);
+	self.dLeftButton.DoClick = function()
+		Clockwork.datastream:Start("updateLastSeen", {target});
 	end;
+
+    self.uLeftButton.DoClick = function()
+        local entryPanel = vgui.Create("cwDfNoteEntry");
+        entryPanel:SendInformation(target);
+    end;
+
+    self.uRightButton.DoClick = function()
+        local entryPanel = vgui.Create("cwDfMedicalEntry");
+        entryPanel:SendInformation(target);
+    end;
+
+    self.dMiddleButton.DoClick = function()
+        self.Menu = DermaMenu();
+
+        self.Menu:AddOption("Anti-Citizen", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "Anti-Citizen"});
+        end):SetImage("icon16/box.png");
+
+        self.Menu:AddSpacer();
+
+        self.Menu:AddOption("Citizen", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "Citizen"});
+        end):SetImage("icon16/user.png");
+
+        self.Menu:AddSpacer();
+
+        self.Menu:AddOption("Black", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "Black"});
+        end):SetImage("icon16/user_gray.png");
+
+        self.Menu:AddOption("Brown", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "Brown"});
+        end):SetImage("icon16/briefcase.png");
+
+        self.Menu:AddOption("Red", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "Red"});
+        end):SetImage("icon16/flag_red.png");
+
+        self.Menu:AddOption("Blue", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "Blue"});
+        end):SetImage("icon16/flag_blue.png");
+
+        self.Menu:AddOption("Green", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "Green"});
+        end):SetImage("icon16/flag_green.png");
+
+        self.Menu:AddOption("White", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "White"});
+        end):SetImage("icon16/award_star_silver_3.png");
+
+        self.Menu:AddOption("Gold", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "Gold"});
+        end):SetImage("icon16/award_star_gold_3.png");
+
+        self.Menu:AddOption("Platinum", function()
+            Clockwork.datastream:Start("updateCivilStatus", {target, "Platinum"});
+        end):SetImage("icon16/shield.png");
+
+        self.Menu:Open();
+    end;
 end;
 
 function PANEL:PopulateGenericData(target, datafile, GenericData)
@@ -103,9 +159,12 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
 	local lastSeen = GenericData.lastSeen
 	local totalPoints = 0;
 
-	for k, v in pairs(datafile) do
-		totalPoints = totalPoints + tonumber(v.points);
-	end;
+	Clockwork.datastream:Start("requestPoints", {target});
+	Clockwork.datastream:Hook("sendPoints", function(data)
+		local points = data[1];
+
+		totalPoints = points;
+	end);
 
 	if (GenericData.civilStatus == "Anti-Citizen") then
         bIsAntiCitizen = true;
@@ -121,7 +180,7 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
     end;
 
     self.NameLabel:SetText(target:Name());
- 	self.InfoPanel:SetInfoText(civilStatus, totalPoints, lastSeen);
+ 	self.InfoPanel:SetInfoText(civilStatus, tonumber(totalPoints), lastSeen);
 end;
 
 function PANEL:Paint(w, h)

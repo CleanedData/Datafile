@@ -5,7 +5,7 @@ Clockwork.kernel:IncludePrefixed("cl_hooks.lua");
 Clockwork.kernel:IncludePrefixed("sv_plugin.lua");
 Clockwork.kernel:IncludePrefixed("sv_hooks.lua");
 
-// All the categories possible.
+// All the categories possible. Yes, the names are quite annoying.
 PLUGIN.Categories = {
 	"med",      // Medical note.
 	"union",    // Union (CWU, WI, UP) type note.
@@ -45,6 +45,7 @@ PLUGIN.RestrictedFactions = {
 	"Houndeye"
 };
 
+// All the civil statuses. Just for verification purposes.
 PLUGIN.CivilStatus = {
 	"Anti-Citizen",
 	"Citizen",
@@ -56,3 +57,30 @@ PLUGIN.CivilStatus = {
 	"Gold",
 	"Platinum",
 };
+
+PLUGIN.Default = {
+	GenericData = {
+        bol = {false, ""},
+        restricted = {false, ""},
+        civilStatus = "Citizen",
+        lastSeen = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
+	},
+	civilianDatafile = {
+        [1] = {
+           	category = "union", // med, union, civil
+            text = "TRANSFERRED TO DISTRICT WORKFORCE.",
+            date = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
+            points = "0",
+            poster = {"Overwatch", "BOT"},
+        },
+	},
+	combineDatafile = {
+        [1] = {
+           	category = "union", // med, union, civil
+            text = "INSTATED AS CIVIL PROTECTOR.",
+            date = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
+            points = "0",
+            poster = {"Overwatch", "BOT"},
+        },
+	},
+}
