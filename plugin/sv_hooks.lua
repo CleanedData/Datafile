@@ -44,11 +44,12 @@ function PLUGIN:LoadDatafile(player)
 			if (!IsValid(player)) then return; end;
 
 			if (Clockwork.database:IsResult(result)) then
-				PrintTable(result);
 				character.file = {
 					GenericData = Clockwork.json:Decode(result[1]._GenericData);
 					Datafile = Clockwork.json:Decode(result[1]._Datafile);
 				};
+
+				--PLUGIN:RefreshEditors(player);
 			end;
 		end);
 
@@ -95,6 +96,12 @@ function PLUGIN:HandleDatafile(player, target)
 		local datafile = PLUGIN:ReturnDatafile(target);
 
 		if (playerValue == 1) then
+			if (bTargetIsRestricted) then
+				Clockwork.player:Notify(player, "This datafile has been restricted; access denied. REASON: " .. restrictedText);
+				
+				return false
+			end;
+
 			-- allow but strip Civil records, don't show BOL buttons, don't show stuff like that yes
 			for k, v in pairs(datafile) do
 				if (v.category == "civil") then
@@ -103,16 +110,16 @@ function PLUGIN:HandleDatafile(player, target)
 			end;
 
 			Clockwork.datastream:Start(player, "createRestrictedDatafile", {target, GenericData, datafile});
+
+			--PLUGIN:AddEditing(player, target);
 		else
 			Clockwork.datastream:Start(player, "createFullDatafile", {target, GenericData, datafile});
+			
+			--PLUGIN:AddEditing(player, target);
 		end;
 	elseif (playerValue < targetValue) then
 		-- don't allow
 		Clockwork.player:Notify(player, "You are not authorized to access this datafile.");
-
-	elseif (bTargetIsRestricted && playerValue < 3) then
-		-- don't allow
-		Clockwork.player:Notify(player, "This datafile has been restricted; access denied. REASON: " + restrictedText);
 	end;
 end;
 
@@ -154,6 +161,15 @@ Clockwork.datastream:Hook("requestPoints", function(player, data)
 	local target = data[1];
 
 	if (PLUGIN:ReturnPermission(player) == 1 && (PLUGIN:ReturnPermission(target) == 0 || PLUGIN:ReturnPermission(target) == 1)) then
+		print(PLUGIN:ReturnPoints(target));
 		Clockwork.datastream:Start(player, "sendPoints", {PLUGIN:ReturnPoints(target)});
 	end;
 end);
+
+// File refresh.
+/*
+Clockwork.datastream:Hook("stopEditing", function(player, data)
+	local target = data[1];
+
+	PLUGIN:RemoveEditing(player, target);
+end);*/

@@ -49,6 +49,7 @@ PLUGIN.RestrictedFactions = {
 PLUGIN.CivilStatus = {
 	"Anti-Citizen",
 	"Citizen",
+	"Black",
 	"Brown",
 	"Red",
 	"Blue",
@@ -64,6 +65,8 @@ PLUGIN.Default = {
         restricted = {false, ""},
         civilStatus = "Citizen",
         lastSeen = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
+        points = 0,
+        sc = 0,
 	},
 	civilianDatafile = {
         [1] = {

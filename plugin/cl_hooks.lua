@@ -5,9 +5,9 @@ Clockwork.datastream:Hook("createRestrictedDatafile", function(data)
 	local GenericData = data[2]
 	local datafile = data[3];
 
-	local cwDatafile = vgui.Create("cwRestrictedDatafile");
-	cwDatafile:PopulateDatafile(target, datafile);
-	cwDatafile:PopulateGenericData(target, datafile, GenericData);
+	PLUGIN.cwDatafile = vgui.Create("cwRestrictedDatafile");
+	PLUGIN.cwDatafile:PopulateDatafile(target, datafile);
+	PLUGIN.cwDatafile:PopulateGenericData(target, datafile, GenericData);
 end);
 
 Clockwork.datastream:Hook("createFullDatafile", function(data)
@@ -15,7 +15,14 @@ Clockwork.datastream:Hook("createFullDatafile", function(data)
 	local GenericData = data[2]
 	local datafile = data[3];
 	
-	local cwDatafile = vgui.Create("cwFullDatafile");
-	cwDatafile:PopulateDatafile(target, datafile);
-	cwDatafile:PopulateGenericData(target, datafile, GenericData);
+	PLUGIN.cwDatafile = vgui.Create("cwFullDatafile");
+	PLUGIN.cwDatafile:PopulateDatafile(target, datafile);
+	PLUGIN.cwDatafile:PopulateGenericData(target, datafile, GenericData);
 end);
+
+// File refresh.
+/*
+Clockwork.datastream:Hook("closeDatafile", function(data)
+	PLUGIN.cwDatafile:Close();
+	PLUGIN.cwDatafile = nil;
+end);*/

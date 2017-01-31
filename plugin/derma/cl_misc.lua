@@ -1,3 +1,5 @@
+local PLUGIN = PLUGIN;
+
 // Civil Record panel.
 local PANEL = {};
 
@@ -34,6 +36,8 @@ function PANEL:SendInformation(target)
 		local points = self.Number:GetValue();
 
 		Clockwork.datastream:Start("addEntry", {target, category, text, points});
+		
+		self:Close();
 	end;
 end;
 
@@ -46,7 +50,6 @@ function PANEL:Paint(w, h)
 end;
 
 vgui.Register("cwDfCivilEntry", PANEL, "DFrame");
-
 
 // Medical record panel.
 local PANEL = {};
@@ -76,8 +79,10 @@ function PANEL:SendInformation(target)
 	self.Submit.DoClick = function()
 		local category = "med";
 		local text = self.Entry:GetText();
-
+		
 		Clockwork.datastream:Start("addEntry", {target, category, text, "0"});
+
+		self:Close();
 	end;
 end;
 
@@ -90,7 +95,6 @@ function PANEL:Paint(w, h)
 end;
 
 vgui.Register("cwDfMedicalEntry", PANEL, "DFrame");
-
 
 // Note entry panel.
 local PANEL = {};
@@ -121,7 +125,9 @@ function PANEL:SendInformation(target)
 		local category = "union";
 		local text = self.Entry:GetText();
 
-		Clockwork.datastream:Start("addEntry", {target, category, text, "0"});
+		Clockwork.datastream:Start("addEntry", {target, category, text, "0"});		
+
+		self:Close();
 	end;
 end;
 
@@ -134,7 +140,6 @@ function PANEL:Paint(w, h)
 end;
 
 vgui.Register("cwDfNoteEntry", PANEL, "DFrame");
-
 
 // Black/grey text entry.
 local PANEL = {};

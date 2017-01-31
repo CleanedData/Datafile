@@ -1,3 +1,5 @@
+local PLUGIN = PLUGIN;
+
 surface.CreateFont("MiddleLabels", {
     font = "DermaLarge",
     size = 21,
@@ -35,7 +37,6 @@ function PANEL:Init()
     self:Center();
 
     self:MakePopup();
-
     self.Status = "";
 
     // Creation of all elements, text is set in the population functions.
@@ -118,16 +119,23 @@ function PANEL:PopulateDatafile(target, datafile)
 end;
 
 function PANEL:PopulateGenericData(target, datafile, GenericData)
-    print(GenericData.bol[1]);
-    local bIsCombine = Schema:PlayerIsCombine()
+    local bIsCombine = Schema:PlayerIsCombine(target);
     local bIsAntiCitizen;
     local bHasBOL = GenericData.bol[1];
     local civilStatus = GenericData.civilStatus;
     local lastSeen = GenericData.lastSeen
-    local totalPoints = 0;
+    local points = 0;
 
-    for k, v in pairs(datafile) do
-        totalPoints = totalPoints + tonumber(v.points);
+    PrintTable(GenericData)
+
+    self:SetTitle(target:Name() .. "'s Datafile");
+
+    if (bIsCombine) then
+        points = GenericData.sc;
+        self.InfoPanel:SetInfoText(civilStatus, points, lastSeen);
+    else
+        points = GenericData.points;
+        self.InfoPanel:SetInfoText(civilStatus, points, lastSeen);
     end;
 
     if (GenericData.civilStatus == "Anti-Citizen") then
@@ -149,7 +157,6 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
     end;
 
     self.NameLabel:SetText(target:Name());
-    self.InfoPanel:SetInfoText(civilStatus, totalPoints, lastSeen);
 
     self.dRightButton.DoClick = function()
         Clockwork.datastream:Start("setBOL", {target});
@@ -178,47 +185,47 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
         self.Menu = DermaMenu();
 
         self.Menu:AddOption("Anti-Citizen", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "Anti-Citizen"});
+            PLUGIN:UpdateCivilStatus(target, "Anti-Citizen");
         end):SetImage("icon16/box.png");
 
         self.Menu:AddSpacer();
 
         self.Menu:AddOption("Citizen", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "Citizen"});
+            PLUGIN:UpdateCivilStatus(target, "Citizen");
         end):SetImage("icon16/user.png");
 
         self.Menu:AddSpacer();
 
         self.Menu:AddOption("Black", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "Black"});
+            PLUGIN:UpdateCivilStatus(target, "Black");
         end):SetImage("icon16/user_gray.png");
 
         self.Menu:AddOption("Brown", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "Brown"});
+            PLUGIN:UpdateCivilStatus(target, "Brown");
         end):SetImage("icon16/briefcase.png");
 
         self.Menu:AddOption("Red", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "Red"});
+            PLUGIN:UpdateCivilStatus(target, "Red");
         end):SetImage("icon16/flag_red.png");
 
         self.Menu:AddOption("Blue", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "Blue"});
+            PLUGIN:UpdateCivilStatus(target, "Blue");
         end):SetImage("icon16/flag_blue.png");
 
         self.Menu:AddOption("Green", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "Green"});
+            PLUGIN:UpdateCivilStatus(target, "Green");
         end):SetImage("icon16/flag_green.png");
 
         self.Menu:AddOption("White", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "White"});
+            PLUGIN:UpdateCivilStatus(target, "White");
         end):SetImage("icon16/award_star_silver_3.png");
 
         self.Menu:AddOption("Gold", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "Gold"});
+            PLUGIN:UpdateCivilStatus(target, "Gold");
         end):SetImage("icon16/award_star_gold_3.png");
 
         self.Menu:AddOption("Platinum", function()
-            Clockwork.datastream:Start("updateCivilStatus", {target, "Platinum"});
+            PLUGIN:UpdateCivilStatus(target, "Platinum");
         end):SetImage("icon16/shield.png");
 
         self.Menu:Open();

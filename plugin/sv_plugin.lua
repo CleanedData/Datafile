@@ -1,6 +1,6 @@
 local PLUGIN = PLUGIN;
 
-PLUGIN.UsingDatafile = {};
+--PLUGIN.UsingDatafile = {};
 
 Clockwork.config:Add("mysql_datafile_table", "datafile", nil, nil, true, true, true);
 
@@ -11,12 +11,15 @@ function PLUGIN:UpdateDatafile(player, GenericData, datafile)
         _GenericData = {
             bol = {false, ""},
             restricted = {false, ""},
-            civilStatus = "";
-            lastSeen = "";
+            civilStatus = "",
+            lastSeen = "",
+            points = 0,
+            sc = 0,
         };
         _Datafile = {
             entries[k] = {
                 category = "", // med, union, civil
+                hidden = boolean,
                 text = "",
                 date = "",
                 points = "",
@@ -28,11 +31,6 @@ function PLUGIN:UpdateDatafile(player, GenericData, datafile)
     local schemaFolder = Clockwork.kernel:GetSchemaFolder();
     local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
     local character = player:GetCharacter();
-
-    print("UPDAAAAAAAAATE")
-    print(character.characterID);
-    print(schemaFolder);
-    print(player:SteamID());
 
     local queryObj = Clockwork.database:Update(datafileTable);
         queryObj:AddWhere("_CharacterID = ?", character.characterID);
@@ -57,8 +55,15 @@ function PLUGIN:AddEntry(category, text, points, player, poster, bCommand)
     local datafile = PLUGIN:ReturnDatafile(player);
     local tableSize = PLUGIN:ReturnDatafileSize(player);
 
+    if (Schema:PlayerIsCombine(player)) then
+        GenericData.sc = GenericData.sc + points;
+    else
+        GenericData.points = GenericData.points + points;
+    end;
+
     datafile[tableSize + 1] = {
         category = category,
+        hidden = false,
         text = text,
         date = os.date("%H:%M:%S - %d/%m/%Y", os.time()),
         points = points,
@@ -72,11 +77,13 @@ function PLUGIN:AddEntry(category, text, points, player, poster, bCommand)
     PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
+/*
 function PLUGIN:AddDatafileUser(user, target)
     local tableSize = #PLUGIN.UsingDatafile;
 
     PLUGIN.UsingDatafile[tableSize + 1] = {user, target};
 end;
+*/
 
 // Set a player their Civil Status.
 function PLUGIN:SetCivilStatus(player, poster, civilStatus)
@@ -138,8 +145,6 @@ end;
 
 // Make the file of a player restricted or not.
 function PLUGIN:SetRestricted(bRestricted, text, player, poster)
-    if (PLUGIN:ReturnPermission(poster) <= 3) then return; end;
-
     local GenericData = PLUGIN:ReturnGenericData(player);
     local datafile = PLUGIN:ReturnDatafile(player);
 
@@ -160,17 +165,44 @@ function PLUGIN:SetRestricted(bRestricted, text, player, poster)
     PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
+// File refresh. Deprecated for now.
+/*
+function PLUGIN:AddEditing(editor, target)
+    table.insert(PLUGIN.UsingDatafile, {editor, target});
+end;
+
+function PLUGIN:RemoveEditing(editor, target)
+    for k, v in pairs(PLUGIN.UsingDatafile) do
+        if (editor == v[1] && target == v[2]) then
+            table.remove(PLUGIN.UsingDatafile, v[k]);
+        end;
+    end;
+end;
+
+// Basically: check if anyone is editing the datafile of a person right now, and if someone is found, refresh the panel of the person who has it opened.
+function PLUGIN:RefreshEditors(target)
+    for k, v in pairs(PLUGIN.UsingDatafile) do
+        if (v[2] == target) then
+            PLUGIN:RefreshFile(v[1], v[2]);
+        end;
+    end;
+end;
+
+function PLUGIN:RefreshFile(editor, target)
+    Clockwork.datastream:Start(editor, "closeDatafile");
+    PLUGIN:HandleDatafile(editor, target);
+end;
+*/
+
 function PLUGIN:ReturnPoints(player)
-    local datafile = PLUGIN:ReturnDatafile(player);
-    local points = 0;
+    local GenericData = PLUGIN:ReturnGenericData(player);
 
-    PrintTable(datafile)
-
-    for k, v in pairs(datafile) do
-        points = points + tonumber(v.points);
+    if (Schema:PlayerIsCombine(player)) then
+        return GenericData.sc;
+    else
+        return GenericData.points;
     end;
 
-    return points;
 end;
 
 // Return _GenericData in normal table format.
