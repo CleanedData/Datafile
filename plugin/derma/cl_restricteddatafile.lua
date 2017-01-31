@@ -1,3 +1,5 @@
+local PLUGIN = PLUGIN;
+
 local colours = {
 	white = Color(180, 180, 180, 255),
 	red = Color(231, 76, 60, 255),
@@ -93,7 +95,6 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
 	local bHasBOL = GenericData.bol[1];
 	local civilStatus = GenericData.civilStatus;
 	local lastSeen = GenericData.lastSeen
-	local totalPoints = 0;
 
 	if (bIsCombine) then
         points = GenericData.sc;
@@ -120,7 +121,6 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
 
  	self.dLeftButton.DoClick = function()
 		Clockwork.datastream:Start("updateLastSeen", {target});
-		PLUGIN:RefreshFile(target)
 	end;
 
     self.uLeftButton.DoClick = function()

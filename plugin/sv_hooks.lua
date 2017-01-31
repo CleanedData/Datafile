@@ -166,6 +166,16 @@ Clockwork.datastream:Hook("requestPoints", function(player, data)
 	end;
 end);
 
+Clockwork.datastream:Hook("removeLine", function(player, data)
+	local target = data[1];
+	local key = data[2];
+	local date = data[3];
+	local category = data[4];
+	local text = data[5];
+
+	PLUGIN:RemoveEntry(target, key, date, category, text);
+end);
+
 // File refresh.
 /*
 Clockwork.datastream:Hook("stopEditing", function(player, data)

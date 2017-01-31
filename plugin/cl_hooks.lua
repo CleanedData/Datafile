@@ -20,6 +20,14 @@ Clockwork.datastream:Hook("createFullDatafile", function(data)
 	PLUGIN.cwDatafile:PopulateGenericData(target, datafile, GenericData);
 end);
 
+Clockwork.datastream:Hook("createManagementPanel", function(data)
+	local target = data[1];
+	local datafile = data[2];
+	
+	PLUGIN.cwManagefile = vgui.Create("cwDfManageFile");
+	PLUGIN.cwManagefile:PopulateEntries(target, datafile);
+end);
+
 // File refresh.
 /*
 Clockwork.datastream:Hook("closeDatafile", function(data)

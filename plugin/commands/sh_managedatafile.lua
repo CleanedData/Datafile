@@ -11,7 +11,7 @@ function COMMAND:OnRun(player, arguments)
     local target = Clockwork.player:FindByID(table.concat(arguments, " "));
 
     if (target) then
-        Clockwork.datastream:Start(player, {target});
+        Clockwork.datastream:Start(player, "createManagementPanel", {target, PLUGIN:ReturnDatafile(target)});
     else
         Clockwork.player:Notify(player, "This datafile does not exist.");
     end;

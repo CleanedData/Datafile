@@ -77,14 +77,6 @@ function PLUGIN:AddEntry(category, text, points, player, poster, bCommand)
     PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
-/*
-function PLUGIN:AddDatafileUser(user, target)
-    local tableSize = #PLUGIN.UsingDatafile;
-
-    PLUGIN.UsingDatafile[tableSize + 1] = {user, target};
-end;
-*/
-
 // Set a player their Civil Status.
 function PLUGIN:SetCivilStatus(player, poster, civilStatus)
     Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
@@ -165,34 +157,15 @@ function PLUGIN:SetRestricted(bRestricted, text, player, poster)
     PLUGIN:UpdateDatafile(player, GenericData, datafile);
 end;
 
-// File refresh. Deprecated for now.
-/*
-function PLUGIN:AddEditing(editor, target)
-    table.insert(PLUGIN.UsingDatafile, {editor, target});
-end;
+function PLUGIN:RemoveEntry(player, key, date, category, text)
+    local GenericData = PLUGIN:ReturnGenericData(player);
+    local datafile = PLUGIN:ReturnDatafile(player);
 
-function PLUGIN:RemoveEditing(editor, target)
-    for k, v in pairs(PLUGIN.UsingDatafile) do
-        if (editor == v[1] && target == v[2]) then
-            table.remove(PLUGIN.UsingDatafile, v[k]);
-        end;
+    if (datafile[key].date == date && datafile[key].category == category && datafile[key].text == text) then
+        table.remove(datafile, key);
+        PLUGIN:UpdateDatafile(player, GenericData, datafile);
     end;
 end;
-
-// Basically: check if anyone is editing the datafile of a person right now, and if someone is found, refresh the panel of the person who has it opened.
-function PLUGIN:RefreshEditors(target)
-    for k, v in pairs(PLUGIN.UsingDatafile) do
-        if (v[2] == target) then
-            PLUGIN:RefreshFile(v[1], v[2]);
-        end;
-    end;
-end;
-
-function PLUGIN:RefreshFile(editor, target)
-    Clockwork.datastream:Start(editor, "closeDatafile");
-    PLUGIN:HandleDatafile(editor, target);
-end;
-*/
 
 function PLUGIN:ReturnPoints(player)
     local GenericData = PLUGIN:ReturnGenericData(player);

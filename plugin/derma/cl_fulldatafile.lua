@@ -529,7 +529,7 @@ function PANEL:Init()
     self.TextPanel.Paint = function() return false end;
 
     self.LeftTextLabel = vgui.Create("DLabel", self.TextPanel);
-    self.LeftTextLabel:SetTextColor(Color(180, 180, 180, 255));
+    self.LeftTextLabel:SetTextColor(Color(220, 220, 220, 255));
     self.LeftTextLabel:SetContentAlignment(4)
     self.LeftTextLabel:Dock(FILL);
     self.LeftTextLabel:DockMargin(5, 5, 5, 5);
@@ -541,7 +541,7 @@ function PANEL:Init()
     self.MiddleTextLabel:DockMargin(5, 5, 5, 5);
 
     self.RightTextLabel = vgui.Create("DLabel", self.TextPanel);
-    self.RightTextLabel:SetTextColor(Color(180, 180, 180, 255));
+    self.RightTextLabel:SetTextColor(Color(220, 220, 220, 255));
     self.RightTextLabel:SetContentAlignment(6)
     self.RightTextLabel:Dock(FILL);
     self.RightTextLabel:DockMargin(5, 5, 5, 5);
