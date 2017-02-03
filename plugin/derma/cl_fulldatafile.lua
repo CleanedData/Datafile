@@ -1,32 +1,5 @@
 local PLUGIN = PLUGIN;
 
-surface.CreateFont("MiddleLabels", {
-    font = "DermaLarge",
-    size = 21,
-    weight = 0,
-})
-
-surface.CreateFont("TopBoldLabel", {
-    font = "DermaLarge",
-    size = 21,
-    weight = 500,
-    antialias = true,
-})
-
-surface.CreateFont("TopLabel", {
-    font = "Helvetica",
-    size = 23,
-    weight = 0,
-    antialias = true,
-})
-
-local colours = {
-    white = Color(180, 180, 180, 255),
-    red = Color(231, 76, 60, 255),
-    green = Color(39, 174, 96),
-    blue = Color(41, 128, 185, 255),
-};
-
 // Main datafile panel.
 local PANEL = {};
 
@@ -93,8 +66,13 @@ function PANEL:Init()
     self.dRightButton = vgui.Create("cwDfButton", self.dButtons);
     self.dRightButton:SetText("ADD BOL");
     self.dRightButton:Dock(RIGHT);
+
+    self.DoClose = function()
+        PLUGIN.cwDatafile = nil;
+    end;
 end;
 
+// Populate the datafile with the entries.
 function PANEL:PopulateDatafile(target, datafile)
     for k, v in pairs(datafile) do
         local text = datafile[k].text;
@@ -118,6 +96,7 @@ function PANEL:PopulateDatafile(target, datafile)
     end;
 end;
 
+// Update the frame with all the relevant information.
 function PANEL:PopulateGenericData(target, datafile, GenericData)
     local bIsCombine = Schema:PlayerIsCombine(target);
     local bIsAntiCitizen;
@@ -126,12 +105,13 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
     local lastSeen = GenericData.lastSeen
     local points = 0;
 
-    PrintTable(GenericData)
-
     self:SetTitle(target:Name() .. "'s Datafile");
 
+    // The logic here can be done far better.
     if (bIsCombine) then
         points = GenericData.sc;
+
+        self.InfoPanel.MiddleHeaderLabel:SetText("CREDITS");
         self.InfoPanel:SetInfoText(civilStatus, points, lastSeen);
     else
         points = GenericData.points;
@@ -160,10 +140,12 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
 
     self.dRightButton.DoClick = function()
         Clockwork.datastream:Start("setBOL", {target});
+        cwDatafile:Refresh(target);
     end;
 
     self.dLeftButton.DoClick = function()
         Clockwork.datastream:Start("updateLastSeen", {target});
+        cwDatafile:Refresh(target);
     end;
 
     self.uLeftButton.DoClick = function()
@@ -185,47 +167,47 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
         self.Menu = DermaMenu();
 
         self.Menu:AddOption("Anti-Citizen", function()
-            PLUGIN:UpdateCivilStatus(target, "Anti-Citizen");
+            cwDatafile:UpdateCivilStatus(target, "Anti-Citizen");
         end):SetImage("icon16/box.png");
 
         self.Menu:AddSpacer();
 
         self.Menu:AddOption("Citizen", function()
-            PLUGIN:UpdateCivilStatus(target, "Citizen");
+            cwDatafile:UpdateCivilStatus(target, "Citizen");
         end):SetImage("icon16/user.png");
 
         self.Menu:AddSpacer();
 
         self.Menu:AddOption("Black", function()
-            PLUGIN:UpdateCivilStatus(target, "Black");
+            cwDatafile:UpdateCivilStatus(target, "Black");
         end):SetImage("icon16/user_gray.png");
 
         self.Menu:AddOption("Brown", function()
-            PLUGIN:UpdateCivilStatus(target, "Brown");
+            cwDatafile:UpdateCivilStatus(target, "Brown");
         end):SetImage("icon16/briefcase.png");
 
         self.Menu:AddOption("Red", function()
-            PLUGIN:UpdateCivilStatus(target, "Red");
+            cwDatafile:UpdateCivilStatus(target, "Red");
         end):SetImage("icon16/flag_red.png");
 
         self.Menu:AddOption("Blue", function()
-            PLUGIN:UpdateCivilStatus(target, "Blue");
+            cwDatafile:UpdateCivilStatus(target, "Blue");
         end):SetImage("icon16/flag_blue.png");
 
         self.Menu:AddOption("Green", function()
-            PLUGIN:UpdateCivilStatus(target, "Green");
+            cwDatafile:UpdateCivilStatus(target, "Green");
         end):SetImage("icon16/flag_green.png");
 
         self.Menu:AddOption("White", function()
-            PLUGIN:UpdateCivilStatus(target, "White");
+            cwDatafile:UpdateCivilStatus(target, "White");
         end):SetImage("icon16/award_star_silver_3.png");
 
         self.Menu:AddOption("Gold", function()
-            PLUGIN:UpdateCivilStatus(target, "Gold");
+            cwDatafile:UpdateCivilStatus(target, "Gold");
         end):SetImage("icon16/award_star_gold_3.png");
 
         self.Menu:AddOption("Platinum", function()
-            PLUGIN:UpdateCivilStatus(target, "Platinum");
+            cwDatafile:UpdateCivilStatus(target, "Platinum");
         end):SetImage("icon16/shield.png");
 
         self.Menu:Open();
@@ -243,7 +225,7 @@ function PANEL:Paint(w, h)
         color = Color(sineToColor, 0, 0, 200);
 
     elseif (self.Status == "blue") then
-        color = Color(0, 200, 200, 200)
+        color = Color(0, 100, 200, 200);
     else
         color = Color(170, 170, 170, 255);
     end;
@@ -252,7 +234,7 @@ function PANEL:Paint(w, h)
     surface.DrawRect(0, 0, w, h);
 
     surface.SetDrawColor(color);
-    surface.DrawOutlinedRect(0, 0, w, h)
+    surface.DrawOutlinedRect(0, 0, w, h);
 end;
 
 vgui.Register("cwFullDatafile", PANEL, "DFrame");

@@ -1,5 +1,4 @@
 local Clockwork = Clockwork;
-local PLUGIN = PLUGIN;
 
 local COMMAND = Clockwork.command:New("ScrubDatafile");
 COMMAND.text = "<string Name>";
@@ -11,7 +10,7 @@ function COMMAND:OnRun(player, arguments)
     local target = Clockwork.player:FindByID(table.concat(arguments, " "));
   
     if (target) then
-        PLUGIN:ScrubDatafile(target);
+        cwDatafile:ScrubDatafile(target);
     else
         Clockwork.player:Notify(player, "You have entered an invalid character.");
     end;

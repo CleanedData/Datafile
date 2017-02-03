@@ -37,6 +37,7 @@ function PANEL:SendInformation(target)
 
 		Clockwork.datastream:Start("addEntry", {target, category, text, points});
 		
+		cwDatafile:Refresh(target);
 		self:Close();
 	end;
 end;
@@ -81,7 +82,8 @@ function PANEL:SendInformation(target)
 		local text = self.Entry:GetText();
 		
 		Clockwork.datastream:Start("addEntry", {target, category, text, "0"});
-
+		
+		cwDatafile:Refresh(target);
 		self:Close();
 	end;
 end;
@@ -126,7 +128,8 @@ function PANEL:SendInformation(target)
 		local text = self.Entry:GetText();
 
 		Clockwork.datastream:Start("addEntry", {target, category, text, "0"});		
-
+		
+		cwDatafile:Refresh(target);
 		self:Close();
 	end;
 end;

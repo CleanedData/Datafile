@@ -1,5 +1,4 @@
 local Clockwork = Clockwork;
-local PLUGIN = PLUGIN;
 
 local COMMAND = Clockwork.command:New("Datafile");
 COMMAND.text = "<string Name>";
@@ -11,10 +10,10 @@ function COMMAND:OnRun(player, arguments)
     local target = Clockwork.player:FindByID(table.concat(arguments, " "));
 
     if (target) then
-        if (PLUGIN:IsRestrictedFaction(target)) then
+        if (cwDatafile:IsRestrictedFaction(target)) then
             Clockwork.player:Notify(player, "This datafile does not exist.");
         else
-            PLUGIN:HandleDatafile(player, target)
+            cwDatafile:HandleDatafile(player, target)
         end;
     else
         Clockwork.player:Notify(player, "This datafile does not exist.");

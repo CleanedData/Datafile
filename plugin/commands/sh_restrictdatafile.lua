@@ -1,5 +1,4 @@
 local Clockwork = Clockwork;
-local PLUGIN = PLUGIN;
 
 local COMMAND = Clockwork.command:New("RestrictDatafile");
 COMMAND.text = "<string Name> <string Reason (empty to unrestrict)>";
@@ -16,13 +15,13 @@ function COMMAND:OnRun(player, arguments)
     end;
 
     if (target) then
-    	if (PLUGIN:ReturnPermission(player) >= 3) then
+    	if (cwDatafile:ReturnPermission(player) >= 3) then
     		if (text) then
-	        	PLUGIN:SetRestricted(true, text, target, player);
+	        	cwDatafile:SetRestricted(true, text, target, player);
 
 	        	Clockwork.player:Notify(player, target:Name() .. "'s file has been restricted.");
     		else
-	        	PLUGIN:SetRestricted(false, "", target, player);
+	        	cwDatafile:SetRestricted(false, "", target, player);
 
 	        	Clockwork.player:Notify(player, target:Name() .. "'s file has been unrestricted.");
     		end;

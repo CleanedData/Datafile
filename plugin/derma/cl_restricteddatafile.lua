@@ -68,6 +68,10 @@ function PANEL:Init()
 	self.dMiddleButton = vgui.Create("cwDfButton", self.dButtons);
 	self.dMiddleButton:SetText("CHANGE CIVIL STATUS");
 	self.dMiddleButton:Dock(RIGHT);
+
+	self.DoClose = function()
+        PLUGIN.cwDatafile = nil;
+    end;
 end;
 
 function PANEL:PopulateDatafile(target, datafile)
@@ -77,16 +81,15 @@ function PANEL:PopulateDatafile(target, datafile)
 		local poster = datafile[k].poster[1];
 		local points = tonumber(datafile[k].points);
 		local color = datafile[k].poster[3];
-
-		if (datafile[k].category == "union") then
-			local entry = vgui.Create("cwDfEntry", self.Entries.Left);
-			entry:SetEntryText(text, date, "~ " .. poster, 0, color);
-			
-		elseif (datafile[k].category == "med") then
-			local entry = vgui.Create("cwDfEntry", self.Entries.Right);
-			entry:SetEntryText(text, date, "~ " .. poster, 0, color);
-		end;
-	end;
+        
+        if (datafile[k].category == "union") then
+            local entry = vgui.Create("cwDfEntry", self.Entries.Left);
+            entry:SetEntryText(text, date, "~ " .. poster, points, color);
+            
+        elseif (datafile[k].category == "med") then
+            local entry = vgui.Create("cwDfEntry", self.Entries.Right);
+            entry:SetEntryText(text, date, "~ " .. poster, points, color);
+        end;    end;
 end;
 
 function PANEL:PopulateGenericData(target, datafile, GenericData)
@@ -121,6 +124,7 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
 
  	self.dLeftButton.DoClick = function()
 		Clockwork.datastream:Start("updateLastSeen", {target});
+		cwDatafile:Refresh(target);
 	end;
 
     self.uLeftButton.DoClick = function()
@@ -137,47 +141,47 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
         self.Menu = DermaMenu();
 
         self.Menu:AddOption("Anti-Citizen", function()
-            PLUGIN:UpdateCivilStatus(target, "Anti-Citizen");
+            cwDatafile:UpdateCivilStatus(target, "Anti-Citizen");
         end):SetImage("icon16/box.png");
 
         self.Menu:AddSpacer();
 
         self.Menu:AddOption("Citizen", function()
-            PLUGIN:UpdateCivilStatus(target, "Citizen");
+            cwDatafile:UpdateCivilStatus(target, "Citizen");
         end):SetImage("icon16/user.png");
 
         self.Menu:AddSpacer();
 
         self.Menu:AddOption("Black", function()
-            PLUGIN:UpdateCivilStatus(target, "Black");
+            cwDatafile:UpdateCivilStatus(target, "Black");
         end):SetImage("icon16/user_gray.png");
 
         self.Menu:AddOption("Brown", function()
-            PLUGIN:UpdateCivilStatus(target, "Brown");
+            cwDatafile:UpdateCivilStatus(target, "Brown");
         end):SetImage("icon16/briefcase.png");
 
         self.Menu:AddOption("Red", function()
-            PLUGIN:UpdateCivilStatus(target, "Red");
+            cwDatafile:UpdateCivilStatus(target, "Red");
         end):SetImage("icon16/flag_red.png");
 
         self.Menu:AddOption("Blue", function()
-            PLUGIN:UpdateCivilStatus(target, "Blue");
+            cwDatafile:UpdateCivilStatus(target, "Blue");
         end):SetImage("icon16/flag_blue.png");
 
         self.Menu:AddOption("Green", function()
-            PLUGIN:UpdateCivilStatus(target, "Green");
+            cwDatafile:UpdateCivilStatus(target, "Green");
         end):SetImage("icon16/flag_green.png");
 
         self.Menu:AddOption("White", function()
-            PLUGIN:UpdateCivilStatus(target, "White");
+            cwDatafile:UpdateCivilStatus(target, "White");
         end):SetImage("icon16/award_star_silver_3.png");
 
         self.Menu:AddOption("Gold", function()
-            PLUGIN:UpdateCivilStatus(target, "Gold");
+            cwDatafile:UpdateCivilStatus(target, "Gold");
         end):SetImage("icon16/award_star_gold_3.png");
 
         self.Menu:AddOption("Platinum", function()
-            PLUGIN:UpdateCivilStatus(target, "Platinum");
+            cwDatafile:UpdateCivilStatus(target, "Platinum");
         end):SetImage("icon16/shield.png");
 
         self.Menu:Open();
