@@ -1,5 +1,13 @@
 local PLUGIN = PLUGIN;
 
+local colours = {
+    white = Color(180, 180, 180, 255),
+    red = Color(231, 76, 60, 255),
+    green = Color(39, 174, 96),
+    blue = Color(41, 128, 185, 255),
+};
+
+
 // Main datafile panel.
 local PANEL = {};
 

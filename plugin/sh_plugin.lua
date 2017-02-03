@@ -33,6 +33,8 @@ PLUGIN.Permissions = {
 		"Civil Worker's Union",
 		"Willard Industries",
 		"Unity Party",
+	},
+	none = {
 		"Citizen",
 	},
 };
