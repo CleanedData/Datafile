@@ -163,7 +163,6 @@ Clockwork.datastream:Hook("requestPoints", function(player, data)
 	local target = data[1];
 
 	if (cwDatafile:ReturnPermission(player) == 1 && (cwDatafile:ReturnPermission(target) == 0 || cwDatafile:ReturnPermission(target) == 1)) then
-		print(cwDatafile:ReturnPoints(target));
 		Clockwork.datastream:Start(player, "sendPoints", {cwDatafile:ReturnPoints(target)});
 	end;
 end);
