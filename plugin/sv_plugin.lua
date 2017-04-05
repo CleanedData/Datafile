@@ -254,7 +254,7 @@ function cwDatafile:ReturnPermission(player)
 		end;
 	end;
 
-	if (permission == nil) then
+	if (!permission) then
 		return 0;
 	end;
 end;
