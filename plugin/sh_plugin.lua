@@ -24,7 +24,7 @@ PLUGIN.Permissions = {
 		"Overwatch Transhuman Arm",
 		"Administrator",
 		"Civil Administration Board",
-		"Metropolice Force",
+		"Civil Protection",
 	},
 	medium = {
 		"Server Administration",
@@ -90,4 +90,4 @@ PLUGIN.Default = {
             poster = {"Overwatch", "BOT"},
         },
 	},
-}
+};

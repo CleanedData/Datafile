@@ -93,6 +93,12 @@ function cwDatafile:HandleDatafile(player, target)
 	local bTargetIsRestricted, restrictedText = cwDatafile:IsRestricted(player);
 
 	if (playerValue >= targetValue) then
+		if (playerValue == 0) then
+			Clockwork.player:Notify(player, "You are not authorized to access this datafile.");
+
+			return false;
+		end;
+
 		local GenericData = cwDatafile:ReturnGenericData(target);
 		local datafile = cwDatafile:ReturnDatafile(target);
 
@@ -116,6 +122,8 @@ function cwDatafile:HandleDatafile(player, target)
 
 	elseif (playerValue < targetValue) then
 		Clockwork.player:Notify(player, "You are not authorized to access this datafile.");
+
+		return false;
 	end;
 end;
 
@@ -153,7 +161,7 @@ Clockwork.datastream:Hook("setBOL", function(player, data)
 
 	if (bHasBOL) then
 		cwDatafile:SetBOL(false, "", target, player);
-	else 
+	else
 		cwDatafile:SetBOL(true, "", target, player);
 	end;
 end);
@@ -175,7 +183,7 @@ Clockwork.datastream:Hook("removeLine", function(player, data)
 	local category = data[4];
 	local text = data[5];
 
-	cwDatafile:RemoveEntry(target, key, date, category, text);
+	cwDatafile:RemoveEntry(player, target, key, date, category, text);
 end);
 
 // Refresh the active datafile panel of a player.

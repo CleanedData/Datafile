@@ -47,9 +47,9 @@ end;
 
 // Add a new entry. bCommand is used to prevent logging when /AddEntry is used.
 function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
-	if (!table.HasValue(PLUGIN.Categories, category)) then return; end;
+	if (!table.HasValue(PLUGIN.Categories, category)) then return false end;
 	if ((cwDatafile:ReturnPermission(poster) <= 1 && category == "civil") || cwDatafile:ReturnPermission(poster) == 0) then return; end;
-	
+
 	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has added an entry to " .. player:Name() .. "'s datafile with category: " .. category);
 
 	local GenericData = cwDatafile:ReturnGenericData(player);
@@ -157,14 +157,16 @@ function cwDatafile:SetRestricted(bRestricted, text, player, poster)
 	cwDatafile:UpdateDatafile(player, GenericData, datafile);
 end;
 
-// Remove an entry by checking for they key & validating it is the entry.
-function cwDatafile:RemoveEntry(player, key, date, category, text)
-	local GenericData = cwDatafile:ReturnGenericData(player);
-	local datafile = cwDatafile:ReturnDatafile(player);
+// Remove an entry by checking for the key & validating it is the entry.
+function cwDatafile:RemoveEntry(player, target, key, date, category, text)
+	local GenericData = cwDatafile:ReturnGenericData(target);
+	local datafile = cwDatafile:ReturnDatafile(target);
 
 	if (datafile[key].date == date && datafile[key].category == category && datafile[key].text == text) then
 		table.remove(datafile, key);
-		cwDatafile:UpdateDatafile(player, GenericData, datafile);
+
+		Clockwork.kernel:PrintLog(LOGTYPE_MINOR, player:Name() .. " has removed an entry of " .. target:Name() .. "'s datafile with category: " .. category);
+		cwDatafile:UpdateDatafile(target, GenericData, datafile);
 	end;
 end;
 
@@ -224,22 +226,36 @@ function cwDatafile:ReturnPermission(player)
 				permission = k;
 
 				if (permission == "elevated") then
+					permission = nil;
+
 					return 4;
 
 				elseif (permission == "full") then
+					permission = nil;
+
 					return 3;
 
 				elseif (permission == "medium") then
+					permission = nil;
+
 					return 2;
 
 				elseif (permission == "minor") then
+					permission = nil;
+
 					return 1;
 
 				elseif (permission == "none") then
+					permission = nil;
+
 					return 0;
 				end;
 			end;
 		end;
+	end;
+
+	if (permission == nil) then
+		return 0;
 	end;
 end;
 
