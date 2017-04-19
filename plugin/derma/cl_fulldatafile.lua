@@ -147,12 +147,12 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
     self.NameLabel:SetText(target:Name());
 
     self.dRightButton.DoClick = function()
-        Clockwork.datastream:Start("setBOL", {target});
+        Clockwork.datastream:Start("SetBOL", {target});
         cwDatafile:Refresh(target);
     end;
 
     self.dLeftButton.DoClick = function()
-        Clockwork.datastream:Start("updateLastSeen", {target});
+        Clockwork.datastream:Start("UpdateLastSeen", {target});
         cwDatafile:Refresh(target);
     end;
 

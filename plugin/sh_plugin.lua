@@ -39,16 +39,6 @@ PLUGIN.Permissions = {
 	},
 };
 
-// Factions that do not get access to the datafile & factions that do not get a datafile.
-PLUGIN.RestrictedFactions = {
-	"Alien Grunt",
-	"Bird",
-	"Houndeye",
-	"Vortigaunt",
-	"Zombie",
-	"Houndeye"
-};
-
 // All the civil statuses. Just for verification purposes.
 PLUGIN.CivilStatus = {
 	"Anti-Citizen",

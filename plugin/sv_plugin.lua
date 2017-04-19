@@ -26,7 +26,7 @@ function cwDatafile:UpdateDatafile(player, GenericData, datafile)
 		};
 	*/
 
-	if (IsValid(player)()) then
+	if (IsValid(player)) then
 		local schemaFolder = Clockwork.kernel:GetSchemaFolder();
 		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
@@ -190,17 +190,17 @@ end;
 
 // Return _GenericData in normal table format.
 function cwDatafile:ReturnGenericData(player)
-	return player:GetCharacter().file.GenericData;
+	return player.cwDatafile.GenericData;
 end;
 
 // Return _Datafile in normal table format.
 function cwDatafile:ReturnDatafile(player)
-	return player:GetCharacter().file.Datafile;
+	return player.cwDatafile.Datafile;
 end;
 
 // Return the size of _Datafile. Used to calculate what key the next entry should be.
 function cwDatafile:ReturnDatafileSize(player)
-	return #(player:GetCharacter().file.Datafile);
+	return #(player.cwDatafile.Datafile);
 end;
 
 // Return the BOL of a player.
@@ -269,11 +269,15 @@ function cwDatafile:IsRestricted(player)
 	return bIsRestricted, restrictedText;
 end;
 
-// If the player is apart of any of the factions within PLUGIN.RestrictedFactions, return true.
+function cwDatafile:
+
+// If the player is apart of any of the factions allowing a datafile, return false.
 function cwDatafile:IsRestrictedFaction(player)
-	if (table:HasValue(PLUGIN.RestrictedFactions, player:GetFaction())) then
-		return true;
-	else
+	local factionTable = Clockwork.faction:FindByID(player:GetFaction());
+
+	if (factionTable.bAllowDatafile) then
 		return false;
 	end;
+
+	return true;
 end;

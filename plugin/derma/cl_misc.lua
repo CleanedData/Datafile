@@ -35,7 +35,7 @@ function PANEL:SendInformation(target)
 		local text = self.Entry:GetText();
 		local points = self.Number:GetValue();
 
-		Clockwork.datastream:Start("addEntry", {target, category, text, points});
+		Clockwork.datastream:Start("AddDatafileEntry", {target, category, text, points});
 		
 		cwDatafile:Refresh(target);
 		self:Close();
@@ -81,7 +81,7 @@ function PANEL:SendInformation(target)
 		local category = "med";
 		local text = self.Entry:GetText();
 		
-		Clockwork.datastream:Start("addEntry", {target, category, text, "0"});
+		Clockwork.datastream:Start("AddDatafileEntry", {target, category, text, "0"});
 		
 		cwDatafile:Refresh(target);
 		self:Close();
@@ -127,7 +127,7 @@ function PANEL:SendInformation(target)
 		local category = "union";
 		local text = self.Entry:GetText();
 
-		Clockwork.datastream:Start("addEntry", {target, category, text, "0"});		
+		Clockwork.datastream:Start("AddDatafileEntry", {target, category, text, "0"});		
 		
 		cwDatafile:Refresh(target);
 		self:Close();
