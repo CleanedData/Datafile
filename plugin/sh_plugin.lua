@@ -62,7 +62,7 @@ PLUGIN.Default = {
         points = 0,
         sc = 0,
 	},
-	civilianDatafile = {
+	CivilianData = {
         [1] = {
            	category = "union", -- med, union, civil
             text = "TRANSFERRED TO DISTRICT WORKFORCE.",
@@ -71,7 +71,7 @@ PLUGIN.Default = {
             poster = {"Overwatch", "BOT"},
         },
 	},
-	combineDatafile = {
+	CombineData = {
         [1] = {
            	category = "union", -- med, union, civil
             text = "INSTATED AS CIVIL PROTECTOR.",

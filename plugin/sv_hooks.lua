@@ -65,6 +65,12 @@ function cwDatafile:CreateDatafile(player)
 		local character = player:GetCharacter();
 		local steamID = player:SteamID();
 
+		local defaultDatafile = self.Default.CivilianData;
+
+		if (Schema:PlayerIsCombine(player)) then
+			defaultDatafile = self.Default.CombineData;
+		end;
+
 		-- Set all the values.
 		local insertObj = mysql:Insert(datafileTable);
 			insertObj:Insert("_CharacterID", character.characterID);
@@ -72,12 +78,17 @@ function cwDatafile:CreateDatafile(player)
 			insertObj:Insert("_SteamID", steamID);
 			insertObj:Insert("_Schema", schemaFolder);
 			insertObj:Insert("_GenericData", Clockwork.json:Encode(PLUGIN.Default.GenericData));
-			insertObj:Insert("_Datafile", Clockwork.json:Encode(PLUGIN.Default.civilianDatafile));
+			insertObj:Insert("_Datafile", Clockwork.json:Encode(defaultDatafile));
+			insertObj:Callback(function(result)
+				cwDatafile:SetHasDatafile(player, true);
+			end);
 		insertObj:ExecutePool(Clockwork.pool);
-
-		-- Change the hasDatafile bool to true to indicate the player has a datafile now.
-		player:SetCharacterData("HasDatafile", true);
 	end;
+end;
+
+-- Sets whether as character has a datafile.
+function cwDatafile:SetHasDatafile(player, bhasDatafile)
+	player:SetCharacterData("HasDatafile", bhasDatafile);
 end;
 
 -- Returns true if the player has a datafile.

@@ -41,7 +41,7 @@ function cwDatafile:UpdateDatafile(player, GenericData, datafile)
 			updateObj:Update("_Datafile", Clockwork.json:Encode(datafile));
 		updateObj:ExecutePool(Clockwork.pool);
 
-		cwDatafile:LoadDatafile(player);
+		self:LoadDatafile(player);
 	end;
 end;
 
@@ -95,9 +95,13 @@ function cwDatafile:SetCivilStatus(player, poster, civilStatus)
 	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
 end;
 
--- Scrub a player their datafile.
-function cwDatafile:ScrubDatafile(player)
-	self:UpdateDatafile(player, PLUGIN.Default.GenericData, PLUGIN.Default.civilianDatafile);
+-- Clear a character's datafile.
+function cwDatafile:ClearDatafile(player)
+	if (Schema:PlayerIsCombine(player)) then
+		self:UpdateDatafile(player, PLUGIN.Default.GenericData, PLUGIN.Default.CombineData);
+	else
+		self:UpdateDatafile(player, PLUGIN.Default.GenericData, PLUGIN.Default.CivilianData);
+	end;
 end;
 
 -- Update the time a player has last been seen.

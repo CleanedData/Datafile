@@ -1,7 +1,7 @@
 local Clockwork = Clockwork;
 
 local COMMAND = Clockwork.command:New("RestrictDatafile");
-COMMAND.text = "<string Name> <string Reason (empty to unrestrict)>";
+COMMAND.text = "<string Name> [string Reason]";
 COMMAND.tip = "Make someone their datafile (un)restricted.";
 COMMAND.arguments = 1;
 COMMAND.optionalArguments = 1;

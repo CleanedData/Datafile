@@ -62,7 +62,7 @@ PLUGIN:SetCivilStatus(player, poster, civilStatus)
 
 Scrub a player their datafile.
 ```
-PLUGIN:ScrubDatafile(player)
+PLUGIN:ClearDatafile(player)
 ```
 
 Edit an entry of a player their file.
