@@ -22,27 +22,21 @@ DATAFILE_PERMISSION_ELEVATED = 4;
 
 -- Permissions for the numerous factions.
 PLUGIN.Permissions = {
-	elevated = {
-		"Overwatch",
-	},
-	full = {
-		"Combine Transhuman Arm",
-		"Overwatch Transhuman Arm",
-		"Administrator",
-		"Civil Administration Board",
-		"Civil Protection",
-	},
-	medium = {
-		"Server Administration",
-	},
-	minor = {
-		"Civil Worker's Union",
-		"Willard Industries",
-		"Unity Party",
-	},
-	none = {
-		"Citizen",
-	},
+	["Overwatch"] = DATAFILE_PERMISSION_ELEVATED,
+
+	["Combine Transhuman Arm"] = DATAFILE_PERMISSION_FULL,
+	["Overwatch Transhuman Arm"] = DATAFILE_PERMISSION_FULL,
+	["Administrator"] = DATAFILE_PERMISSION_FULL,
+	["Civil Administration Board"] = DATAFILE_PERMISSION_FULL,
+	["Civil Protection"] = DATAFILE_PERMISSION_FULL,
+
+	["Server Administration"] = DATAFILE_PERMISSION_MEDIUM,
+
+	["Civil Worker's Union"] = DATAFILE_PERMISSION_MINOR,
+	["Willard Industries"] = DATAFILE_PERMISSION_MINOR,
+	["Unity Party"] = DATAFILE_PERMISSION_MINOR,
+
+	["Citizen"] = DATAFILE_PERMISSION_NONE
 };
 
 -- All the civil statuses. Just for verification purposes.

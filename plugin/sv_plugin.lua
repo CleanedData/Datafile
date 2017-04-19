@@ -221,26 +221,8 @@ function cwDatafile:ReturnPermission(player)
 	local faction = player:GetFaction();
 	local permission = DATAFILE_PERMISSION_NONE;
 
-	for k, v in pairs(PLUGIN.Permissions) do
-		for k2, v2 in pairs(PLUGIN.Permissions[k]) do
-			if (faction == v2) then
-				if (k == "elevated") then
-					permission = DATAFILE_PERMISSION_ELEVATED;
-					break;
-				elseif (k == "full") then
-					permission = DATAFILE_PERMISSION_FULL;
-					break;
-				elseif (k == "medium") then
-					permission = DATAFILE_PERMISSION_MEDIUM;
-					break;
-				elseif (k == "minor") then
-					permission = DATAFILE_PERMISSION_MINOR;
-					break;
-				elseif (k == "none") then
-					break;
-				end;
-			end;
-		end;
+	if (self.Permissions[faction]) then
+		permission = self.Permissions[faction];
 	end;
 
 	return permission;
@@ -254,8 +236,6 @@ function cwDatafile:IsRestricted(player)
 
 	return bIsRestricted, restrictedText;
 end;
-
-function cwDatafile:
 
 -- If the player is apart of any of the factions allowing a datafile, return false.
 function cwDatafile:IsRestrictedFaction(player)
