@@ -47,12 +47,11 @@ end;
 
 -- Add a new entry. bCommand is used to prevent logging when /AddEntry is used.
 function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
-	if (!table.HasValue(PLUGIN.Categories, category)) then return false end;
+	if (!self.Categories[category]) then return false end;
 	if ((self:ReturnPermission(poster) <= DATAFILE_PERMISSION_MINOR and category == "civil") or self:ReturnPermission(poster) == DATAFILE_PERMISSION_NONE) then return; end;
 
 	local GenericData = self:ReturnGenericData(player);
 	local datafile = self:ReturnDatafile(player);
-	local tableSize = self:ReturnDatafileSize(player);
 
 	-- If the player isCombine, add SC instead.
 	if (Schema:PlayerIsCombine(player)) then
@@ -62,7 +61,7 @@ function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
 	end;
 
 	-- Add a new entry with all the following values.
-	datafile[tableSize + 1] = {
+	datafile[#datafile + 1] = {
 		category = category,
 		hidden = false,
 		text = text,
@@ -164,7 +163,7 @@ function cwDatafile:RemoveEntry(player, target, key, date, category, text)
 
 	if (datafile[key].date == date and datafile[key].category == category and datafile[key].text == text) then
 		table.remove(datafile, key);
-		
+
 		self:UpdateDatafile(target, GenericData, datafile);
 
 		Clockwork.kernel:PrintLog(LOGTYPE_MINOR, player:Name() .. " has removed an entry of " .. target:Name() .. "'s datafile with category: " .. category);
@@ -196,11 +195,6 @@ end;
 -- Return _Datafile in normal table format.
 function cwDatafile:ReturnDatafile(player)
 	return player.cwDatafile.Datafile;
-end;
-
--- Return the size of _Datafile. Used to calculate what key the next entry should be.
-function cwDatafile:ReturnDatafileSize(player)
-	return #(player.cwDatafile.Datafile);
 end;
 
 -- Return the BOL of a player.

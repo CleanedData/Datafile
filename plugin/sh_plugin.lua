@@ -9,9 +9,9 @@ Clockwork.kernel:IncludePrefixed("sv_hooks.lua");
 
 -- All the categories possible. Yes, the names are quite annoying.
 PLUGIN.Categories = {
-	"med",      -- Medical note.
-	"union",    -- Union (CWU, WI, UP) type note.
-	"civil",    -- Civil Protection/CTA type note.
+	["med"] = true,     -- Medical note.
+	["union"] = true,   -- Union (CWU, WI, UP) type note.
+	["civil"] = true    -- Civil Protection/CTA type note.
 };
 
 DATAFILE_PERMISSION_NONE = 0;
