@@ -35,13 +35,13 @@ end;
 -- Update a player their Civil Status.
 function cwDatafile:UpdateCivilStatus(target, tier)
 	Clockwork.datastream:Start("UpdateCivilStatus", {target, tier});
-	cwDatafile:Refresh(target);
+	self:Refresh(target);
 end;
 
 -- A small delay is added for callback reasons. Really disgusting solution.
 function cwDatafile:Refresh(target)
 	timer.Simple(0.05, function()
-		PLUGIN.cwDatafile:Close();
+		PLUGIN.Datafile:Close();
 		Clockwork.datastream:Start("RefreshDatafile", {target});
 	end);
 end;

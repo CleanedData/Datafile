@@ -70,7 +70,7 @@ function PANEL:Init()
 	self.dMiddleButton:Dock(RIGHT);
 
 	self.DoClose = function()
-        PLUGIN.cwDatafile = nil;
+        PLUGIN.Datafile = nil;
     end;
 end;
 

@@ -21,15 +21,15 @@ end;
 
 -- Check if the player has a datafile or not. If not, create one.
 function cwDatafile:PostPlayerSpawn(player)
-	local bHasDatafile = cwDatafile:HasDatafile(player);
+	local bHasDatafile = self:HasDatafile(player);
 
 	-- Nil because the bHasDatafile is not in every player their character data.
-	if ((!bHasDatafile or bHasDatafile == nil) and cwDatafile:IsRestrictedFaction(player)) then
-		cwDatafile:CreateDatafile(player);
+	if ((!bHasDatafile or bHasDatafile == nil) and self:IsRestrictedFaction(player)) then
+		self:CreateDatafile(player);
 	end;
 
 	-- load the datafile again with the new changes.
-	cwDatafile:LoadDatafile(player);
+	self:LoadDatafile(player);
 end;
 
 -- Function to load the datafile on the player's character. Used after updating something in the MySQL.
@@ -39,7 +39,7 @@ function cwDatafile:LoadDatafile(player)
 		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
 
-		local queryObj = mysql:Select(charactersTable);
+		local queryObj = mysql:Select(datafileTable);
 			queryObj:Where("_CharacterID", character.characterID);
 			queryObj:Where("_SteamID", player:SteamID());
 			queryObj:Where("_Schema", schemaFolder);
@@ -66,7 +66,7 @@ function cwDatafile:CreateDatafile(player)
 		local steamID = player:SteamID();
 
 		-- Set all the values.
-		local insertObj = mysql:Insert(bansTable);
+		local insertObj = mysql:Insert(datafileTable);
 			insertObj:Insert("_CharacterID", character.characterID);
 			insertObj:Insert("_CharacterName", character.name);
 			insertObj:Insert("_SteamID", steamID);
@@ -87,9 +87,9 @@ end;
 
 -- Datafile handler. Decides what to do when a player types /Datafile John Doe.
 function cwDatafile:HandleDatafile(player, target)
-	local playerValue = cwDatafile:ReturnPermission(player);
-	local targetValue = cwDatafile:ReturnPermission(target);
-	local bTargetIsRestricted, restrictedText = cwDatafile:IsRestricted(player);
+	local playerValue = self:ReturnPermission(player);
+	local targetValue = self:ReturnPermission(target);
+	local bTargetIsRestricted, restrictedText = self:IsRestricted(player);
 
 	if (playerValue >= targetValue) then
 		if (playerValue == DATAFILE_PERMISSION_NONE) then
@@ -98,8 +98,8 @@ function cwDatafile:HandleDatafile(player, target)
 			return false;
 		end;
 
-		local GenericData = cwDatafile:ReturnGenericData(target);
-		local datafile = cwDatafile:ReturnDatafile(target);
+		local GenericData = self:ReturnGenericData(target);
+		local datafile = self:ReturnDatafile(target);
 
 		if (playerValue == DATAFILE_PERMISSION_MINOR) then
 			if (bTargetIsRestricted) then

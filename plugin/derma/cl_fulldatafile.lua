@@ -76,7 +76,7 @@ function PANEL:Init()
     self.dRightButton:Dock(RIGHT);
 
     self.DoClose = function()
-        PLUGIN.cwDatafile = nil;
+        PLUGIN.Datafile = nil;
     end;
 end;
 

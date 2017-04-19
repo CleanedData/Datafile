@@ -28,7 +28,7 @@ function PANEL:Init()
 
 	-- Ensure the variable doesn't exist anymore.
 	self.DoClose = function()
-        PLUGIN.cwManageFile = nil;
+        PLUGIN.ManageFile = nil;
     end;
 end;
 

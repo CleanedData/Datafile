@@ -6,9 +6,9 @@ Clockwork.datastream:Hook("CreateRestrictedDatafile", function(data)
 	local GenericData = data[2]
 	local datafile = data[3];
 
-	PLUGIN.cwDatafile = vgui.Create("cwRestrictedDatafile");
-	PLUGIN.cwDatafile:PopulateDatafile(target, datafile);
-	PLUGIN.cwDatafile:PopulateGenericData(target, datafile, GenericData);
+	PLUGIN.Datafile = vgui.Create("cwRestrictedDatafile");
+	PLUGIN.Datafile:PopulateDatafile(target, datafile);
+	PLUGIN.Datafile:PopulateGenericData(target, datafile, GenericData);
 end);
 
 -- Create the full datafile.
@@ -17,9 +17,9 @@ Clockwork.datastream:Hook("CreateFullDatafile", function(data)
 	local GenericData = data[2]
 	local datafile = data[3];
 	
-	PLUGIN.cwDatafile = vgui.Create("cwFullDatafile");
-	PLUGIN.cwDatafile:PopulateDatafile(target, datafile);
-	PLUGIN.cwDatafile:PopulateGenericData(target, datafile, GenericData);
+	PLUGIN.Datafile = vgui.Create("cwFullDatafile");
+	PLUGIN.Datafile:PopulateDatafile(target, datafile);
+	PLUGIN.Datafile:PopulateGenericData(target, datafile, GenericData);
 end);
 
 -- Management panel, for removing entries.
@@ -27,6 +27,6 @@ Clockwork.datastream:Hook("CreateFullDatafile", function(data)
 	local target = data[1];
 	local datafile = data[2];
 	
-	PLUGIN.cwManagefile = vgui.Create("cwDfManageFile");
-	PLUGIN.cwManagefile:PopulateEntries(target, datafile);
+	PLUGIN.Managefile = vgui.Create("cwDfManageFile");
+	PLUGIN.Managefile:PopulateEntries(target, datafile);
 end);
