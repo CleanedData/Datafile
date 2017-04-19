@@ -1,6 +1,6 @@
 local PLUGIN = PLUGIN;
 
-// Datafile management panel. Allows one to remove/edit entries.
+-- Datafile management panel. Allows one to remove/edit entries.
 local PANEL = {};
 
 function PANEL:Init() 
@@ -26,7 +26,7 @@ function PANEL:Init()
 	self.Delete:Dock(BOTTOM);
 	self.Delete:DockMargin(0, 5, 0, 0);
 
-	// Ensure the variable doesn't exist anymore.
+	-- Ensure the variable doesn't exist anymore.
 	self.DoClose = function()
         PLUGIN.cwManageFile = nil;
     end;

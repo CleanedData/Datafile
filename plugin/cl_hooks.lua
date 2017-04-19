@@ -1,6 +1,6 @@
 local PLUGIN = PLUGIN;
 
-// Open the datafile, start the population functions. Restricted: means it is limited.
+-- Open the datafile, start the population functions. Restricted: means it is limited.
 Clockwork.datastream:Hook("CreateRestrictedDatafile", function(data)
 	local target = data[1];
 	local GenericData = data[2]
@@ -11,7 +11,7 @@ Clockwork.datastream:Hook("CreateRestrictedDatafile", function(data)
 	PLUGIN.cwDatafile:PopulateGenericData(target, datafile, GenericData);
 end);
 
-// Full datafile.
+-- Create the full datafile.
 Clockwork.datastream:Hook("CreateFullDatafile", function(data)
 	local target = data[1];
 	local GenericData = data[2]
@@ -22,7 +22,7 @@ Clockwork.datastream:Hook("CreateFullDatafile", function(data)
 	PLUGIN.cwDatafile:PopulateGenericData(target, datafile, GenericData);
 end);
 
-// Management panel, for removing entries.
+-- Management panel, for removing entries.
 Clockwork.datastream:Hook("CreateFullDatafile", function(data)
 	local target = data[1];
 	local datafile = data[2];

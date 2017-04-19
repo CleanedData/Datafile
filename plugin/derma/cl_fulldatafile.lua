@@ -8,7 +8,7 @@ local colours = {
 };
 
 
-// Main datafile panel.
+-- Main datafile panel.
 local PANEL = {};
 
 function PANEL:Init()
@@ -20,10 +20,10 @@ function PANEL:Init()
     self:MakePopup();
     self.Status = "";
 
-    // Creation of all elements, text is set in the population functions.
+    -- Creation of all elements, text is set in the population functions.
     self.TopPanel = vgui.Create("cwDfPanel", self);
     
-    // TODO: Add the CID here!
+    -- TODO: Add the CID here!
     self.NameLabel = vgui.Create("DLabel", self.TopPanel);
     self.NameLabel:SetTextColor(Color(255, 255, 255));
     self.NameLabel:SetFont("DermaLarge");
@@ -36,17 +36,17 @@ function PANEL:Init()
     self.HeaderPanel = vgui.Create("cwDfHeaderPanel", self);
     self.Entries = vgui.Create("cwDfEntriesPanel", self);
 
-    // Lower button panel.
+    -- Lower button panel.
     self.dButtons = vgui.Create("cwDfPanel", self);
     self.dButtons:Dock(BOTTOM);
     self.dButtons:SetTall(35);
 
-    // Upper button panel.
+    -- Upper button panel.
     self.uButtons = vgui.Create("cwDfPanel", self);
     self.uButtons:Dock(BOTTOM);
     self.uButtons:SetTall(35);
 
-    // Upper buttons. Population will be done below.
+    -- Upper buttons. Population will be done below.
     self.uLeftButton = vgui.Create("cwDfButton", self.uButtons);
     self.uLeftButton:SetText("ADD NOTE");
     self.uLeftButton:SetMetroColor(colours.blue);
@@ -62,7 +62,7 @@ function PANEL:Init()
     self.uRightButton:SetMetroColor(colours.green);
     self.uRightButton:Dock(RIGHT);
 
-    // Bottom buttons.
+    -- Bottom buttons.
     self.dLeftButton = vgui.Create("cwDfButton", self.dButtons);
     self.dLeftButton:SetText("UPDATE LAST SEEN");
     self.dLeftButton:Dock(LEFT);
@@ -80,7 +80,7 @@ function PANEL:Init()
     end;
 end;
 
-// Populate the datafile with the entries.
+-- Populate the datafile with the entries.
 function PANEL:PopulateDatafile(target, datafile)
     for k, v in pairs(datafile) do
         local text = datafile[k].text;
@@ -104,7 +104,7 @@ function PANEL:PopulateDatafile(target, datafile)
     end;
 end;
 
-// Update the frame with all the relevant information.
+-- Update the frame with all the relevant information.
 function PANEL:PopulateGenericData(target, datafile, GenericData)
     local bIsCombine = Schema:PlayerIsCombine(target);
     local bIsAntiCitizen;
@@ -115,7 +115,7 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
 
     self:SetTitle(target:Name() .. "'s Datafile");
 
-    // The logic here can be done far better.
+    -- The logic here can be done far better.
     if (bIsCombine) then
         points = GenericData.sc;
 
@@ -248,7 +248,7 @@ end;
 vgui.Register("cwFullDatafile", PANEL, "DFrame");
 
 
-// Top panel/darker panel.
+-- Top panel/darker panel.
 local PANEL = {};
 
 function PANEL:Init()
@@ -264,7 +264,7 @@ end;
 vgui.Register("cwDfPanel", PANEL, "DPanel");
 
 
-// Header panel. Shows what category each tab is in.
+-- Header panel. Shows what category each tab is in.
 local PANEL = {};
 
 function PANEL:Init()
@@ -310,7 +310,7 @@ end;
 
 vgui.Register("cwDfHeaderPanel", PANEL, "DPanel");
 
-// Panel that will contain the entries & the 3 scroll bars.
+-- Panel that will contain the entries & the 3 scroll bars.
 local PANEL = {};
 
 function PANEL:Init()
@@ -339,14 +339,14 @@ end;
 
 vgui.Register("cwDfEntriesPanel", PANEL, "DPanel");
 
-// Darker scroll panel.
+-- Darker scroll panel.
 local PANEL = {};
 
 function PANEL:Init()
     self:SetWide(225);
     self:DockMargin(5, 0, 5, 0)
 
-    // Can't figure out how to use the PAINT functions for this, if that's possible.
+    -- Can't figure out how to use the PAINT functions for this, if that's possible.
     self.SBar = self:GetVBar();
 
     function self.SBar:Paint(w, h)
@@ -372,7 +372,7 @@ end;
 
 vgui.Register("cwDfScrollPanel", PANEL, "DScrollPanel");
 
-// Darker buttons.
+-- Darker buttons.
 local PANEL = {};
 
 function PANEL:Init()
@@ -380,7 +380,7 @@ function PANEL:Init()
     self:SetWide(225);
     self:DockMargin(5, 2.5, 5, 2.5);
 
-    // Reason why I'm doing the colours this way is because I don't want any filthy logic in my Paint function.
+    -- Reason why I'm doing the colours this way is because I don't want any filthy logic in my Paint function.
     self.MetroColor = colours.white;
     self.ButtonColor = Color(47, 47, 47, 255);
 end;
@@ -407,7 +407,7 @@ end;
 
 vgui.Register("cwDfButton", PANEL, "DButton");
 
-// Entry for one of the scroll panels.
+-- Entry for one of the scroll panels.
 local PANEL = {};
 
 function PANEL:Init()
@@ -482,7 +482,7 @@ end;
 
 vgui.Register("cwDfEntry", PANEL, "DPanel");
 
-// Info panel. Panel below the name of the player.
+-- Info panel. Panel below the name of the player.
 local PANEL = {};
 
 function PANEL:Init()

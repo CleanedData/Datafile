@@ -1,6 +1,6 @@
 local PLUGIN = PLUGIN;
 
-// Civil Record panel.
+-- Civil Record panel.
 local PANEL = {};
 
 function PANEL:Init()
@@ -52,7 +52,7 @@ end;
 
 vgui.Register("cwDfCivilEntry", PANEL, "DFrame");
 
-// Medical record panel.
+-- Medical record panel.
 local PANEL = {};
 
 function PANEL:Init()
@@ -98,7 +98,7 @@ end;
 
 vgui.Register("cwDfMedicalEntry", PANEL, "DFrame");
 
-// Note entry panel.
+-- Note entry panel.
 local PANEL = {};
 
 function PANEL:Init()
@@ -144,7 +144,7 @@ end;
 
 vgui.Register("cwDfNoteEntry", PANEL, "DFrame");
 
-// Black/grey text entry.
+-- Black/grey text entry.
 local PANEL = {};
 
 function PANEL:Paint(w, h)

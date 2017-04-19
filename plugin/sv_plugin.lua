@@ -2,7 +2,7 @@ local PLUGIN = PLUGIN;
 
 Clockwork.config:Add("mysql_datafile_table", "datafile", nil, nil, true, true, true);
 
-// Update the player their datafile.
+-- Update the player their datafile.
 function cwDatafile:UpdateDatafile(player, GenericData, datafile)
 	/* Datafile structure:
 		table to JSON encoded with CW function:
@@ -16,7 +16,7 @@ function cwDatafile:UpdateDatafile(player, GenericData, datafile)
 		};
 		_Datafile = {
 			entries[k] = {
-				category = "", // med, union, civil
+				category = "", -- med, union, civil
 				hidden = boolean,
 				text = "",
 				date = "",
@@ -31,7 +31,7 @@ function cwDatafile:UpdateDatafile(player, GenericData, datafile)
 		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
 
-		// Update all the values of a player.
+		-- Update all the values of a player.
 		local updateObj = mysql:Update(datafileTable);
 			updateObj:Where("_CharacterID", character.characterID);
 			updateObj:Where("_SteamID", player:SteamID());
@@ -45,7 +45,7 @@ function cwDatafile:UpdateDatafile(player, GenericData, datafile)
 	end;
 end;
 
-// Add a new entry. bCommand is used to prevent logging when /AddEntry is used.
+-- Add a new entry. bCommand is used to prevent logging when /AddEntry is used.
 function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
 	if (!table.HasValue(PLUGIN.Categories, category)) then return false end;
 	if ((cwDatafile:ReturnPermission(poster) <= DATAFILE_PERMISSION_MINOR and category == "civil") or cwDatafile:ReturnPermission(poster) == DATAFILE_PERMISSION_NONE) then return; end;
@@ -54,14 +54,14 @@ function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
 	local datafile = cwDatafile:ReturnDatafile(player);
 	local tableSize = cwDatafile:ReturnDatafileSize(player);
 
-	// If the player isCombine, add SC instead.
+	-- If the player isCombine, add SC instead.
 	if (Schema:PlayerIsCombine(player)) then
 		GenericData.sc = GenericData.sc + points;
 	else
 		GenericData.points = GenericData.points + points;
 	end;
 
-	// Add a new entry with all the following values.
+	-- Add a new entry with all the following values.
 	datafile[tableSize + 1] = {
 		category = category,
 		hidden = false,
@@ -75,13 +75,13 @@ function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
 		},
 	};
 
-	// Update the player their file with the new entry and possible points addition.
+	-- Update the player their file with the new entry and possible points addition.
 	cwDatafile:UpdateDatafile(player, GenericData, datafile);
 
 	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has added an entry to " .. player:Name() .. "'s datafile with category: " .. category);
 end;
 
-// Set a player their Civil Status.
+-- Set a player their Civil Status.
 function cwDatafile:SetCivilStatus(player, poster, civilStatus)
 	if (!table.HasValue(PLUGIN.CivilStatus, civilStatus)) then return; end;
 	if (cwDatafile:ReturnPermission(poster) < DATAFILE_PERMISSION_MINOR) then return; end;
@@ -96,12 +96,12 @@ function cwDatafile:SetCivilStatus(player, poster, civilStatus)
 	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
 end;
 
-// Scrub a player their datafile.
+-- Scrub a player their datafile.
 function cwDatafile:ScrubDatafile(player)
 	cwDatafile:UpdateDatafile(player, PLUGIN.Default.GenericData, PLUGIN.Default.civilianDatafile);
 end;
 
-// Update the time a player has last been seen.
+-- Update the time a player has last been seen.
 function cwDatafile:UpdateLastSeen(player)
 	local GenericData = cwDatafile:ReturnGenericData(player);
 	local datafile = cwDatafile:ReturnDatafile(player);
@@ -110,7 +110,7 @@ function cwDatafile:UpdateLastSeen(player)
 	cwDatafile:UpdateDatafile(player, GenericData, datafile);
 end;
 
-// Enable or disable a BOL on the player.
+-- Enable or disable a BOL on the player.
 function cwDatafile:SetBOL(bBOL, text, player, poster)
 	if (cwDatafile:ReturnPermission(poster) <= DATAFILE_PERMISSION_MINOR) then return; end;
 
@@ -135,7 +135,7 @@ function cwDatafile:SetBOL(bBOL, text, player, poster)
 	cwDatafile:UpdateDatafile(player, GenericData, datafile);
 end;
 
-// Make the file of a player restricted or not.
+-- Make the file of a player restricted or not.
 function cwDatafile:SetRestricted(bRestricted, text, player, poster)
 	local GenericData = cwDatafile:ReturnGenericData(player);
 	local datafile = cwDatafile:ReturnDatafile(player);
@@ -157,7 +157,7 @@ function cwDatafile:SetRestricted(bRestricted, text, player, poster)
 	cwDatafile:UpdateDatafile(player, GenericData, datafile);
 end;
 
-// Remove an entry by checking for the key & validating it is the entry.
+-- Remove an entry by checking for the key & validating it is the entry.
 function cwDatafile:RemoveEntry(player, target, key, date, category, text)
 	local GenericData = cwDatafile:ReturnGenericData(target);
 	local datafile = cwDatafile:ReturnDatafile(target);
@@ -171,7 +171,7 @@ function cwDatafile:RemoveEntry(player, target, key, date, category, text)
 	end;
 end;
 
-// Return the amount of points someone has.
+-- Return the amount of points someone has.
 function cwDatafile:ReturnPoints(player)
 	local GenericData = cwDatafile:ReturnGenericData(player);
 
@@ -188,22 +188,22 @@ function cwDatafile:ReturnCivilStatus(player)
 	return GenericData.civilStatus;
 end;
 
-// Return _GenericData in normal table format.
+-- Return _GenericData in normal table format.
 function cwDatafile:ReturnGenericData(player)
 	return player.cwDatafile.GenericData;
 end;
 
-// Return _Datafile in normal table format.
+-- Return _Datafile in normal table format.
 function cwDatafile:ReturnDatafile(player)
 	return player.cwDatafile.Datafile;
 end;
 
-// Return the size of _Datafile. Used to calculate what key the next entry should be.
+-- Return the size of _Datafile. Used to calculate what key the next entry should be.
 function cwDatafile:ReturnDatafileSize(player)
 	return #(player.cwDatafile.Datafile);
 end;
 
-// Return the BOL of a player.
+-- Return the BOL of a player.
 function cwDatafile:ReturnBOL(player)
 	local GenericData = cwDatafile:ReturnGenericData(player);
 	local bHasBOL = GenericData.bol[1];
@@ -216,7 +216,7 @@ function cwDatafile:ReturnBOL(player)
 	end;
 end;
 
-// Return the permission of a player. The higher, the more privileges.
+-- Return the permission of a player. The higher, the more privileges.
 function cwDatafile:ReturnPermission(player)
 	local faction = player:GetFaction();
 	local permission = DATAFILE_PERMISSION_NONE;
@@ -246,7 +246,7 @@ function cwDatafile:ReturnPermission(player)
 	return permission;
 end;
 
-// Returns if the player their file is restricted or not, and the text if it is.
+-- Returns if the player their file is restricted or not, and the text if it is.
 function cwDatafile:IsRestricted(player)
 	local GenericData = cwDatafile:ReturnGenericData(player);
 	local bIsRestricted = GenericData.restricted[1];
@@ -257,7 +257,7 @@ end;
 
 function cwDatafile:
 
-// If the player is apart of any of the factions allowing a datafile, return false.
+-- If the player is apart of any of the factions allowing a datafile, return false.
 function cwDatafile:IsRestrictedFaction(player)
 	local factionTable = Clockwork.faction:FindByID(player:GetFaction());
 

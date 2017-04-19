@@ -1,6 +1,6 @@
 local PLUGIN = PLUGIN;
 
-// Create the table for the datafile.
+-- Create the table for the datafile.
 function cwDatafile:ClockworkDatabaseConnected()
 	local CREATE_DATAFILE_TABLE = [[
 	CREATE TABLE IF NOT EXISTS `]]..Clockwork.config:Get("mysql_datafile_table"):Get()..[[` (
@@ -19,20 +19,20 @@ function cwDatafile:ClockworkDatabaseConnected()
 	mysql:RawQuery(string.gsub(CREATE_DATAFILE_TABLE, "%s", " "));
 end;
 
-// Check if the player has a datafile or not. If not, create one.
+-- Check if the player has a datafile or not. If not, create one.
 function cwDatafile:PostPlayerSpawn(player)
 	local bHasDatafile = cwDatafile:HasDatafile(player);
 
-	// Nil because the bHasDatafile is not in every player their character data.
+	-- Nil because the bHasDatafile is not in every player their character data.
 	if ((!bHasDatafile or bHasDatafile == nil) and cwDatafile:IsRestrictedFaction(player)) then
 		cwDatafile:CreateDatafile(player);
 	end;
 
-	// load the datafile again with the new changes.
+	-- load the datafile again with the new changes.
 	cwDatafile:LoadDatafile(player);
 end;
 
-// Function to load the datafile on the player's character. Used after updating something in the MySQL.
+-- Function to load the datafile on the player's character. Used after updating something in the MySQL.
 function cwDatafile:LoadDatafile(player)
 	if (IsValid(player)) then
 		local schemaFolder = Clockwork.kernel:GetSchemaFolder();
@@ -57,7 +57,7 @@ function cwDatafile:LoadDatafile(player)
 	end;
 end;
 
-// Create a datafile for the player.
+-- Create a datafile for the player.
 function cwDatafile:CreateDatafile(player)
 	if (IsValid(player)) then
 		local schemaFolder = Clockwork.kernel:GetSchemaFolder();
@@ -65,7 +65,7 @@ function cwDatafile:CreateDatafile(player)
 		local character = player:GetCharacter();
 		local steamID = player:SteamID();
 
-		// Set all the values.
+		-- Set all the values.
 		local insertObj = mysql:Insert(bansTable);
 			insertObj:Insert("_CharacterID", character.characterID);
 			insertObj:Insert("_CharacterName", character.name);
@@ -75,24 +75,24 @@ function cwDatafile:CreateDatafile(player)
 			insertObj:Insert("_Datafile", Clockwork.json:Encode(PLUGIN.Default.civilianDatafile));
 		insertObj:ExecutePool(Clockwork.pool);
 
-		// Change the hasDatafile bool to true to indicate the player has a datafile now.
+		-- Change the hasDatafile bool to true to indicate the player has a datafile now.
 		player:SetCharacterData("HasDatafile", true);
 	end;
 end;
 
-// Returns true if the player has a datafile.
+-- Returns true if the player has a datafile.
 function cwDatafile:HasDatafile(player)
 	return player:GetCharacterData("HasDatafile");
 end;
 
-// Datafile handler. Decides what to do when a player types /Datafile John Doe.
+-- Datafile handler. Decides what to do when a player types /Datafile John Doe.
 function cwDatafile:HandleDatafile(player, target)
 	local playerValue = cwDatafile:ReturnPermission(player);
 	local targetValue = cwDatafile:ReturnPermission(target);
 	local bTargetIsRestricted, restrictedText = cwDatafile:IsRestricted(player);
 
 	if (playerValue >= targetValue) then
-		if (playerValue == 0) then
+		if (playerValue == DATAFILE_PERMISSION_NONE) then
 			Clockwork.player:Notify(player, "You are not authorized to access this datafile.");
 
 			return false;
@@ -101,7 +101,7 @@ function cwDatafile:HandleDatafile(player, target)
 		local GenericData = cwDatafile:ReturnGenericData(target);
 		local datafile = cwDatafile:ReturnDatafile(target);
 
-		if (playerValue == 1) then
+		if (playerValue == DATAFILE_PERMISSION_MINOR) then
 			if (bTargetIsRestricted) then
 				Clockwork.player:Notify(player, "This datafile has been restricted; access denied. REASON: " .. restrictedText);
 
@@ -126,16 +126,16 @@ function cwDatafile:HandleDatafile(player, target)
 	end;
 end;
 
-// Datastream
+-- Datastream
 
-// Update the last seen.
+-- Update the last seen.
 Clockwork.datastream:Hook("UpdateLastSeen", function(player, data)
 	local target = data[1];
 
 	cwDatafile:UpdateLastSeen(target);
 end);
 
-// Update the civil status.
+-- Update the civil status.
 Clockwork.datastream:Hook("UpdateCivilStatus", function(player, data)
 	local target = data[1];
 	local civilStatus = data[2];
@@ -143,7 +143,7 @@ Clockwork.datastream:Hook("UpdateCivilStatus", function(player, data)
 	cwDatafile:SetCivilStatus(target, player, civilStatus);
 end);
 
-// Add a new entry.
+-- Add a new entry.
 Clockwork.datastream:Hook("AddDatafileEntry", function(player, data)
 	local target = data[1];
 	local category = data[2];
@@ -153,7 +153,7 @@ Clockwork.datastream:Hook("AddDatafileEntry", function(player, data)
 	cwDatafile:AddEntry(category, text, points, target, player, false);
 end);
 
-// Add/remove a BOL.
+-- Add/remove a BOL.
 Clockwork.datastream:Hook("SetBOL", function(player, data)
 	local target = data[1];
 	local bHasBOL = cwDatafile:ReturnBOL(player);
@@ -165,7 +165,7 @@ Clockwork.datastream:Hook("SetBOL", function(player, data)
 	end;
 end);
 
-// Send the points of the player back to the user.
+-- Send the points of the player back to the user.
 Clockwork.datastream:Hook("RequestPoints", function(player, data)
 	local target = data[1];
 
@@ -174,7 +174,7 @@ Clockwork.datastream:Hook("RequestPoints", function(player, data)
 	end;
 end);
 
-// Remove a line from someone their datafile.
+-- Remove a line from someone their datafile.
 Clockwork.datastream:Hook("RemoveDatafileLine", function(player, data)
 	local target = data[1];
 	local key = data[2];
@@ -185,7 +185,7 @@ Clockwork.datastream:Hook("RemoveDatafileLine", function(player, data)
 	cwDatafile:RemoveEntry(player, target, key, date, category, text);
 end);
 
-// Refresh the active datafile panel of a player.
+-- Refresh the active datafile panel of a player.
 Clockwork.datastream:Hook("RefreshDatafile", function(player, data)
 	local target = data[1];
 

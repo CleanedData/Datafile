@@ -7,7 +7,7 @@ local colours = {
 	blue = Color(41, 128, 185, 255),
 };
 
-// Main datafile panel.
+-- Main datafile panel.
 local PANEL = {};
 
 function PANEL:Init()
@@ -20,10 +20,10 @@ function PANEL:Init()
 
 	self.Status = "";
 
-	// Creation of all elements, text is set in the population functions.
+	-- Creation of all elements, text is set in the population functions.
 	self.TopPanel = vgui.Create("cwDfPanel", self);
 	
-	// TODO: Add the CID here!
+	-- TODO: Add the CID here!
 	self.NameLabel = vgui.Create("DLabel", self.TopPanel);
 	self.NameLabel:SetTextColor(Color(255, 255, 255));
 	self.NameLabel:SetFont("DermaLarge");
@@ -39,17 +39,17 @@ function PANEL:Init()
 	self.Entries = vgui.Create("cwDfEntriesPanel", self);
 	self.Entries:MakeRestricted(true);
 
-	// Lower button panel.
+	-- Lower button panel.
 	self.dButtons = vgui.Create("cwDfPanel", self);
 	self.dButtons:Dock(BOTTOM);
 	self.dButtons:SetTall(35);
 
-	// Upper button panel.
+	-- Upper button panel.
 	self.uButtons = vgui.Create("cwDfPanel", self);
 	self.uButtons:Dock(BOTTOM);
 	self.uButtons:SetTall(35);
 
-	// Upper buttons. Population will be done below.
+	-- Upper buttons. Population will be done below.
 	self.uLeftButton = vgui.Create("cwDfButton", self.uButtons);
 	self.uLeftButton:SetText("ADD NOTE");
 	self.uLeftButton:SetMetroColor(colours.blue);
@@ -60,7 +60,7 @@ function PANEL:Init()
 	self.uRightButton:SetMetroColor(colours.green);
 	self.uRightButton:Dock(RIGHT);
 
-	// Bottom buttons.
+	-- Bottom buttons.
 	self.dLeftButton = vgui.Create("cwDfButton", self.dButtons);
 	self.dLeftButton:SetText("UPDATE LAST SEEN");
 	self.dLeftButton:Dock(LEFT);
