@@ -16,7 +16,7 @@ function cwDatafile:ClockworkDatabaseConnected()
 	KEY `_SteamID` (`_SteamID`))
 	]];
 
-	Clockwork.database:Query(string.gsub(CREATE_DATAFILE_TABLE, "%s", " "), nil, nil, true);
+	mysql:RawQuery(string.gsub(CREATE_DATAFILE_TABLE, "%s", " "));
 end;
 
 // Check if the player has a datafile or not. If not, create one.
@@ -24,7 +24,7 @@ function cwDatafile:PostPlayerSpawn(player)
 	local bHasDatafile = cwDatafile:HasDatafile(player);
 
 	// Nil because the bHasDatafile is not in every player their character data.
-	if ((!bHasDatafile || bHasDatafile == nil) && !cwDatafile:IsRestrictedFaction(player)) then
+	if ((!bHasDatafile or bHasDatafile == nil) and !cwDatafile:IsRestrictedFaction(player)) then
 		cwDatafile:CreateDatafile(player);
 	end;
 
@@ -34,56 +34,55 @@ end;
 
 // Function to load the datafile on the player's character. Used after updating something in the MySQL.
 function cwDatafile:LoadDatafile(player)
-	if (player:IsValid()) then
+	if (IsValid(player)()) then
 		local schemaFolder = Clockwork.kernel:GetSchemaFolder();
 		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
 
-		local queryObj = Clockwork.database:Select(datafileTable);
-			queryObj:AddWhere("_CharacterID = ?", character.characterID);
-			queryObj:AddWhere("_SteamID = ?", player:SteamID());
-			queryObj:AddWhere("_Schema = ?", schemaFolder);
-			queryObj:SetCallback(function(result)
+		local queryObj = mysql:Select(charactersTable);
+			queryObj:Where("_CharacterID", character.characterID);
+			queryObj:Where("_SteamID", player:SteamID());
+			queryObj:Where("_Schema", schemaFolder);
+			queryObj:Callback(function(result, status, lastID)
 				if (!IsValid(player)) then return; end;
 
-				if (Clockwork.database:IsResult(result)) then
+				if (mysql:IsResult(result)) then
 					character.file = {
 						GenericData = Clockwork.json:Decode(result[1]._GenericData);
 						Datafile = Clockwork.json:Decode(result[1]._Datafile);
 					};
 				end;
 			end);
-
-		queryObj:Pull();
+		queryObj:ExecutePool(Clockwork.pool);
 	end;
 end;
 
 // Create a datafile for the player.
 function cwDatafile:CreateDatafile(player)
-	if (player:IsValid()) then
+	if (IsValid(player)()) then
 		local schemaFolder = Clockwork.kernel:GetSchemaFolder();
 		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
 		local steamID = player:SteamID();
 
 		// Set all the values.
-		local queryObj = Clockwork.database:Insert(datafileTable);
-			queryObj:SetValue("_CharacterID", character.characterID);
-			queryObj:SetValue("_CharacterName", character.name);
-			queryObj:SetValue("_SteamID", steamID);
-			queryObj:SetValue("_Schema", schemaFolder);
-			queryObj:SetValue("_GenericData", Clockwork.json:Encode(PLUGIN.Default.GenericData));
-			queryObj:SetValue("_Datafile", Clockwork.json:Encode(PLUGIN.Default.civilianDatafile));
-		queryObj:Push();
+		local insertObj = mysql:Insert(bansTable);
+			insertObj:Insert("_CharacterID", character.characterID);
+			insertObj:Insert("_CharacterName", character.name);
+			insertObj:Insert("_SteamID", steamID);
+			insertObj:Insert("_Schema", schemaFolder);
+			insertObj:Insert("_GenericData", Clockwork.json:Encode(PLUGIN.Default.GenericData));
+			insertObj:Insert("_Datafile", Clockwork.json:Encode(PLUGIN.Default.civilianDatafile));
+		insertObj:ExecutePool(Clockwork.pool);
 
 		// Change the hasDatafile bool to true to indicate the player has a datafile now.
-		player:SetCharacterData("hasDatafile", true);
+		player:SetCharacterData("HasDatafile", true);
 	end;
 end;
 
 // Returns true if the player has a datafile.
 function cwDatafile:HasDatafile(player)
-	return player:GetCharacterData("hasDatafile");
+	return player:GetCharacterData("HasDatafile");
 end;
 
 // Datafile handler. Decides what to do when a player types /Datafile John Doe.
@@ -170,7 +169,7 @@ end);
 Clockwork.datastream:Hook("requestPoints", function(player, data)
 	local target = data[1];
 
-	if (cwDatafile:ReturnPermission(player) == 1 && (cwDatafile:ReturnPermission(target) == 0 || cwDatafile:ReturnPermission(target) == 1)) then
+	if (cwDatafile:ReturnPermission(player) == 1 and (cwDatafile:ReturnPermission(target) == 0 or cwDatafile:ReturnPermission(target) == 1)) then
 		Clockwork.datastream:Start(player, "sendPoints", {cwDatafile:ReturnPoints(target)});
 	end;
 end);

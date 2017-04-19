@@ -26,20 +26,20 @@ function cwDatafile:UpdateDatafile(player, GenericData, datafile)
 		};
 	*/
 
-	if (player:IsValid()) then
+	if (IsValid(player)()) then
 		local schemaFolder = Clockwork.kernel:GetSchemaFolder();
 		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
 
 		// Update all the values of a player.
-		local queryObj = Clockwork.database:Update(datafileTable);
-			queryObj:AddWhere("_CharacterID = ?", character.characterID);
-			queryObj:AddWhere("_SteamID = ?", player:SteamID());
-			queryObj:AddWhere("_Schema = ?", schemaFolder);
-			queryObj:SetValue("_CharacterName", character.name);
-			queryObj:SetValue("_GenericData", Clockwork.json:Encode(GenericData));
-			queryObj:SetValue("_Datafile", Clockwork.json:Encode(datafile));
-		queryObj:Push();
+		local updateObj = mysql:Update(datafileTable);
+			updateObj:Where("_CharacterID", character.characterID);
+			updateObj:Where("_SteamID", player:SteamID());
+			updateObj:Where("_Schema", schemaFolder);
+			updateObj:Update("_CharacterName", character.name);
+			updateObj:Update("_GenericData", Clockwork.json:Encode(GenericData));
+			updateObj:Update("_Datafile", Clockwork.json:Encode(datafile));
+		updateObj:ExecutePool(Clockwork.pool);
 
 		cwDatafile:LoadDatafile(player);
 	end;
@@ -48,9 +48,7 @@ end;
 // Add a new entry. bCommand is used to prevent logging when /AddEntry is used.
 function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
 	if (!table.HasValue(PLUGIN.Categories, category)) then return false end;
-	if ((cwDatafile:ReturnPermission(poster) <= 1 && category == "civil") || cwDatafile:ReturnPermission(poster) == 0) then return; end;
-
-	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has added an entry to " .. player:Name() .. "'s datafile with category: " .. category);
+	if ((cwDatafile:ReturnPermission(poster) <= 1 and category == "civil") or cwDatafile:ReturnPermission(poster) == 0) then return; end;
 
 	local GenericData = cwDatafile:ReturnGenericData(player);
 	local datafile = cwDatafile:ReturnDatafile(player);
@@ -79,6 +77,8 @@ function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
 
 	// Update the player their file with the new entry and possible points addition.
 	cwDatafile:UpdateDatafile(player, GenericData, datafile);
+
+	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has added an entry to " .. player:Name() .. "'s datafile with category: " .. category);
 end;
 
 // Set a player their Civil Status.
@@ -90,10 +90,10 @@ function cwDatafile:SetCivilStatus(player, poster, civilStatus)
 	local datafile = cwDatafile:ReturnDatafile(player);
 	GenericData.civilStatus = civilStatus;
 
-	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
-
 	cwDatafile:AddEntry("union", poster:GetCharacter().name .. " has changed " .. player:GetCharacter().name .. "'s Civil Status to: " .. civilStatus, 0, player, poster);
 	cwDatafile:UpdateDatafile(player, GenericData, datafile);
+
+	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
 end;
 
 // Scrub a player their datafile.
@@ -162,11 +162,12 @@ function cwDatafile:RemoveEntry(player, target, key, date, category, text)
 	local GenericData = cwDatafile:ReturnGenericData(target);
 	local datafile = cwDatafile:ReturnDatafile(target);
 
-	if (datafile[key].date == date && datafile[key].category == category && datafile[key].text == text) then
+	if (datafile[key].date == date and datafile[key].category == category and datafile[key].text == text) then
 		table.remove(datafile, key);
+		
+		cwDatafile:UpdateDatafile(target, GenericData, datafile);
 
 		Clockwork.kernel:PrintLog(LOGTYPE_MINOR, player:Name() .. " has removed an entry of " .. target:Name() .. "'s datafile with category: " .. category);
-		cwDatafile:UpdateDatafile(target, GenericData, datafile);
 	end;
 end;
 
