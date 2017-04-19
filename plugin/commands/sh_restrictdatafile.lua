@@ -15,7 +15,7 @@ function COMMAND:OnRun(player, arguments)
     end;
 
     if (target) then
-    	if (cwDatafile:ReturnPermission(player) >= 3) then
+    	if (cwDatafile:ReturnPermission(player) >= DATAFILE_PERMISSION_FULL) then
     		if (text) then
 	        	cwDatafile:SetRestricted(true, text, target, player);
 

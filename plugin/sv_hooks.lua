@@ -169,7 +169,7 @@ end);
 Clockwork.datastream:Hook("RequestPoints", function(player, data)
 	local target = data[1];
 
-	if (cwDatafile:ReturnPermission(player) == 1 and (cwDatafile:ReturnPermission(target) == 0 or cwDatafile:ReturnPermission(target) == 1)) then
+	if (cwDatafile:ReturnPermission(player) == DATAFILE_PERMISSION_MINOR and (cwDatafile:ReturnPermission(target) == DATAFILE_PERMISSION_NONE or cwDatafile:ReturnPermission(target) == DATAFILE_PERMISSION_MINOR)) then
 		Clockwork.datastream:Start(player, "SendPoints", {cwDatafile:ReturnPoints(target)});
 	end;
 end);

@@ -14,6 +14,12 @@ PLUGIN.Categories = {
 	"civil",    // Civil Protection/CTA type note.
 };
 
+DATAFILE_PERMISSION_NONE = 0;
+DATAFILE_PERMISSION_MINOR = 1;
+DATAFILE_PERMISSION_MEDIUM = 2;
+DATAFILE_PERMISSION_FULL = 3;
+DATAFILE_PERMISSION_ELEVATED = 4;
+
 // Permissions for the numerous factions.
 PLUGIN.Permissions = {
 	elevated = {

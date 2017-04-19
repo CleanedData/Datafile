@@ -48,7 +48,7 @@ end;
 // Add a new entry. bCommand is used to prevent logging when /AddEntry is used.
 function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
 	if (!table.HasValue(PLUGIN.Categories, category)) then return false end;
-	if ((cwDatafile:ReturnPermission(poster) <= 1 and category == "civil") or cwDatafile:ReturnPermission(poster) == 0) then return; end;
+	if ((cwDatafile:ReturnPermission(poster) <= DATAFILE_PERMISSION_MINOR and category == "civil") or cwDatafile:ReturnPermission(poster) == DATAFILE_PERMISSION_NONE) then return; end;
 
 	local GenericData = cwDatafile:ReturnGenericData(player);
 	local datafile = cwDatafile:ReturnDatafile(player);
@@ -84,7 +84,7 @@ end;
 // Set a player their Civil Status.
 function cwDatafile:SetCivilStatus(player, poster, civilStatus)
 	if (!table.HasValue(PLUGIN.CivilStatus, civilStatus)) then return; end;
-	if (cwDatafile:ReturnPermission(poster) < 1) then return; end;
+	if (cwDatafile:ReturnPermission(poster) < DATAFILE_PERMISSION_MINOR) then return; end;
 
 	local GenericData = cwDatafile:ReturnGenericData(player);
 	local datafile = cwDatafile:ReturnDatafile(player);
@@ -112,7 +112,7 @@ end;
 
 // Enable or disable a BOL on the player.
 function cwDatafile:SetBOL(bBOL, text, player, poster)
-	if (cwDatafile:ReturnPermission(poster) <= 1) then return; end;
+	if (cwDatafile:ReturnPermission(poster) <= DATAFILE_PERMISSION_MINOR) then return; end;
 
 	local GenericData = cwDatafile:ReturnGenericData(player);
 	local datafile = cwDatafile:ReturnDatafile(player);
@@ -219,45 +219,31 @@ end;
 // Return the permission of a player. The higher, the more privileges.
 function cwDatafile:ReturnPermission(player)
 	local faction = player:GetFaction();
-	local permission;
+	local permission = DATAFILE_PERMISSION_NONE;
 
 	for k, v in pairs(PLUGIN.Permissions) do
-		for l, q in pairs(PLUGIN.Permissions[k]) do
-			if (faction == q) then
-				permission = k;
-
-				if (permission == "elevated") then
-					permission = nil;
-
-					return 4;
-
-				elseif (permission == "full") then
-					permission = nil;
-
-					return 3;
-
-				elseif (permission == "medium") then
-					permission = nil;
-
-					return 2;
-
-				elseif (permission == "minor") then
-					permission = nil;
-
-					return 1;
-
-				elseif (permission == "none") then
-					permission = nil;
-
-					return 0;
+		for k2, v2 in pairs(PLUGIN.Permissions[k]) do
+			if (faction == v2) then
+				if (k == "elevated") then
+					permission = DATAFILE_PERMISSION_ELEVATED;
+					break;
+				elseif (k == "full") then
+					permission = DATAFILE_PERMISSION_FULL;
+					break;
+				elseif (k == "medium") then
+					permission = DATAFILE_PERMISSION_MEDIUM;
+					break;
+				elseif (k == "minor") then
+					permission = DATAFILE_PERMISSION_MINOR;
+					break;
+				elseif (k == "none") then
+					break;
 				end;
 			end;
 		end;
 	end;
 
-	if (!permission) then
-		return 0;
-	end;
+	return permission;
 end;
 
 // Returns if the player their file is restricted or not, and the text if it is.
