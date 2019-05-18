@@ -51,22 +51,22 @@ function PANEL:Init()
 
 	-- Upper buttons. Population will be done below.
 	self.uLeftButton = vgui.Create("cwDfButton", self.uButtons);
-	self.uLeftButton:SetText("ADD NOTE");
+	self.uLeftButton:SetText(L"#datafile_derma_fulldatafile_upper_button_1");
 	self.uLeftButton:SetMetroColor(colours.blue);
 	self.uLeftButton:Dock(LEFT);
 
 	self.uRightButton = vgui.Create("cwDfButton", self.uButtons);
-	self.uRightButton:SetText("ADD MEDICAL RECORD");
+	self.uRightButton:SetText(L"#datafile_derma_fulldatafile_upper_button_3");
 	self.uRightButton:SetMetroColor(colours.green);
 	self.uRightButton:Dock(RIGHT);
 
 	-- Bottom buttons.
 	self.dLeftButton = vgui.Create("cwDfButton", self.dButtons);
-	self.dLeftButton:SetText("UPDATE LAST SEEN");
+	self.dLeftButton:SetText(L"#datafile_derma_fulldatafile_bottom_button_1");
 	self.dLeftButton:Dock(LEFT);
 
 	self.dMiddleButton = vgui.Create("cwDfButton", self.dButtons);
-	self.dMiddleButton:SetText("CHANGE CIVIL STATUS");
+	self.dMiddleButton:SetText(L"#datafile_derma_fulldatafile_bottom_button_2");
 	self.dMiddleButton:Dock(RIGHT);
 
 	self.DoClose = function()
@@ -113,7 +113,7 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
 
     if (bHasBol) then
         self.Status = "yellow";
-        self.dRightButton:SetText("REMOVE BOL");
+        self.dRightButton:SetText(L"#datafile_derma_fulldatafile_right_button_1");
     elseif (bIsAntiCitizen) then
         self.Status = "red";
     elseif (bIsCombine) then
@@ -123,7 +123,7 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
     self.NameLabel:SetText(target:Name());
 
  	self.dLeftButton.DoClick = function()
-		Clockwork.datastream:Start("UpdateLastSeen", {target});
+		netstream.Start("UpdateLastSeen", {target});
 		cwDatafile:Refresh(target);
 	end;
 

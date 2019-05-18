@@ -1,23 +1,23 @@
-local Clockwork = Clockwork;
+local cw, cwDatafile = cw, cwDatafile
 
-local COMMAND = Clockwork.command:New("Datafile");
-COMMAND.text = "<string Name>";
-COMMAND.tip = "View the datafile of someone.";
-COMMAND.flags = CMD_DEFAULT;
-COMMAND.arguments = 1;
+local COMMAND = cw.command:New("Datafile")
+COMMAND.text = "#datafile_command_datafile_syntax"
+COMMAND.tip = "#datafile_command_datafile_tip"
+COMMAND.flags = CMD_DEFAULT
+COMMAND.arguments = 1
 
 function COMMAND:OnRun(player, arguments)
-    local target = Clockwork.player:FindByID(table.concat(arguments, " "));
+    local target = _player.Find(table.concat(arguments, " "))
 
     if (target) then
         if (cwDatafile:IsRestrictedFaction(target)) then
-            Clockwork.player:Notify(player, "This datafile does not exist.");
+            cw.player:Notify(player, L"#datafile_command_datafile_err")
         else
             cwDatafile:HandleDatafile(player, target)
-        end;
+        end
     else
-        Clockwork.player:Notify(player, "This datafile does not exist.");
-    end;
-end;
+        cw.player:Notify(player, L"#datafile_command_datafile_err")
+    end
+end
 
-COMMAND:Register();
+COMMAND:Register()

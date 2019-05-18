@@ -1,9 +1,9 @@
 local PLUGIN = PLUGIN;
 
 -- Create the table for the datafile.
-function cwDatafile:ClockworkDatabaseConnected()
+function cwDatafile:DatabaseConnected()
 	local CREATE_DATAFILE_TABLE = [[
-	CREATE TABLE IF NOT EXISTS `]]..Clockwork.config:Get("mysql_datafile_table"):Get()..[[` (
+	CREATE TABLE IF NOT EXISTS `]]..cw.config:Get("mysql_datafile_table"):Get()..[[` (
 	`_Key` smallint(11) unsigned NOT NULL AUTO_INCREMENT,
 	`_CharacterID` varchar(50) NOT NULL,
 	`_CharacterName` varchar(150) NOT NULL,
@@ -35,8 +35,8 @@ end;
 -- Function to load the datafile on the player's character. Used after updating something in the MySQL.
 function cwDatafile:LoadDatafile(player)
 	if (IsValid(player)) then
-		local schemaFolder = Clockwork.kernel:GetSchemaFolder();
-		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
+		local schemaFolder = cw.core:GetSchemaFolder();
+		local datafileTable = cw.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
 
 		local queryObj = mysql:Select(datafileTable);
@@ -48,20 +48,20 @@ function cwDatafile:LoadDatafile(player)
 
 				if (mysql:IsResult(result)) then
 					player.cwDatafile = {
-						GenericData = Clockwork.json:Decode(result[1]._GenericData);
-						Datafile = Clockwork.json:Decode(result[1]._Datafile);
+						GenericData = cw.json:Decode(result[1]._GenericData);
+						Datafile = cw.json:Decode(result[1]._Datafile);
 					};
 				end;
 			end);
-		queryObj:ExecutePool(Clockwork.pool);
+		queryObj:ExecutePool(cw.pool);
 	end;
 end;
 
 -- Create a datafile for the player.
 function cwDatafile:CreateDatafile(player)
 	if (IsValid(player)) then
-		local schemaFolder = Clockwork.kernel:GetSchemaFolder();
-		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
+		local schemaFolder = cw.core:GetSchemaFolder();
+		local datafileTable = cw.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
 		local steamID = player:SteamID();
 
@@ -77,12 +77,12 @@ function cwDatafile:CreateDatafile(player)
 			insertObj:Insert("_CharacterName", character.name);
 			insertObj:Insert("_SteamID", steamID);
 			insertObj:Insert("_Schema", schemaFolder);
-			insertObj:Insert("_GenericData", Clockwork.json:Encode(PLUGIN.Default.GenericData));
-			insertObj:Insert("_Datafile", Clockwork.json:Encode(defaultDatafile));
+			insertObj:Insert("_GenericData", cw.json:Encode(PLUGIN.Default.GenericData));
+			insertObj:Insert("_Datafile", cw.json:Encode(defaultDatafile));
 			insertObj:Callback(function(result)
 				cwDatafile:SetHasDatafile(player, true);
 			end);
-		insertObj:ExecutePool(Clockwork.pool);
+		insertObj:ExecutePool(cw.pool);
 	end;
 end;
 
@@ -104,7 +104,7 @@ function cwDatafile:HandleDatafile(player, target)
 
 	if (playerValue >= targetValue) then
 		if (playerValue == DATAFILE_PERMISSION_NONE) then
-			Clockwork.player:Notify(player, "You are not authorized to access this datafile.");
+			cw.player:Notify(player, L"#datafile_handledatafile_err_1");
 
 			return false;
 		end;
@@ -114,7 +114,7 @@ function cwDatafile:HandleDatafile(player, target)
 
 		if (playerValue == DATAFILE_PERMISSION_MINOR) then
 			if (bTargetIsRestricted) then
-				Clockwork.player:Notify(player, "This datafile has been restricted; access denied. REASON: " .. restrictedText);
+				cw.player:Notify(player, L("#datafile_handledatafile_err_2", restrictedText));
 
 				return false;
 			end;
@@ -125,29 +125,29 @@ function cwDatafile:HandleDatafile(player, target)
 				end;
 			end;
 
-			Clockwork.datastream:Start(player, "CreateRestrictedDatafile", {target, GenericData, datafile});
+			netstream.Start(player, "CreateRestrictedDatafile", {target, GenericData, datafile});
 		else
-			Clockwork.datastream:Start(player, "CreateFullDatafile", {target, GenericData, datafile});
+			netstream.Start(player, "CreateFullDatafile", {target, GenericData, datafile});
 		end;
 
 	elseif (playerValue < targetValue) then
-		Clockwork.player:Notify(player, "You are not authorized to access this datafile.");
+		cw.player:Notify(player, "#datafile_handledatafile_err_3");
 
 		return false;
 	end;
 end;
 
--- Datastream
+-- Netstream
 
 -- Update the last seen.
-Clockwork.datastream:Hook("UpdateLastSeen", function(player, data)
+netstream.Hook("UpdateLastSeen", function(player, data)
 	local target = data[1];
 
 	cwDatafile:UpdateLastSeen(target);
 end);
 
 -- Update the civil status.
-Clockwork.datastream:Hook("UpdateCivilStatus", function(player, data)
+netstream.Hook("UpdateCivilStatus", function(player, data)
 	local target = data[1];
 	local civilStatus = data[2];
 
@@ -155,7 +155,7 @@ Clockwork.datastream:Hook("UpdateCivilStatus", function(player, data)
 end);
 
 -- Add a new entry.
-Clockwork.datastream:Hook("AddDatafileEntry", function(player, data)
+netstream.Hook("AddDatafileEntry", function(player, data)
 	local target = data[1];
 	local category = data[2];
 	local text = data[3];
@@ -165,7 +165,7 @@ Clockwork.datastream:Hook("AddDatafileEntry", function(player, data)
 end);
 
 -- Add/remove a BOL.
-Clockwork.datastream:Hook("SetBOL", function(player, data)
+netstream.Hook("SetBOL", function(player, data)
 	local target = data[1];
 	local bHasBOL = cwDatafile:ReturnBOL(player);
 
@@ -177,16 +177,16 @@ Clockwork.datastream:Hook("SetBOL", function(player, data)
 end);
 
 -- Send the points of the player back to the user.
-Clockwork.datastream:Hook("RequestPoints", function(player, data)
+netstream.Hook("RequestPoints", function(player, data)
 	local target = data[1];
 
 	if (cwDatafile:ReturnPermission(player) == DATAFILE_PERMISSION_MINOR and (cwDatafile:ReturnPermission(target) == DATAFILE_PERMISSION_NONE or cwDatafile:ReturnPermission(target) == DATAFILE_PERMISSION_MINOR)) then
-		Clockwork.datastream:Start(player, "SendPoints", {cwDatafile:ReturnPoints(target)});
+		netstream.Start(player, "SendPoints", {cwDatafile:ReturnPoints(target)});
 	end;
 end);
 
 -- Remove a line from someone their datafile.
-Clockwork.datastream:Hook("RemoveDatafileLine", function(player, data)
+netstream.Hook("RemoveDatafileLine", function(player, data)
 	local target = data[1];
 	local key = data[2];
 	local date = data[3];
@@ -197,7 +197,7 @@ Clockwork.datastream:Hook("RemoveDatafileLine", function(player, data)
 end);
 
 -- Refresh the active datafile panel of a player.
-Clockwork.datastream:Hook("RefreshDatafile", function(player, data)
+netstream.Hook("RefreshDatafile", function(player, data)
 	local target = data[1];
 
 	cwDatafile:HandleDatafile(player, target);

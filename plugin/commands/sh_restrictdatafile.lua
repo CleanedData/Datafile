@@ -1,36 +1,38 @@
-local Clockwork = Clockwork;
+local cw, cwDatafile = cw, cwDatafile
 
-local COMMAND = Clockwork.command:New("RestrictDatafile");
-COMMAND.text = "<string Name> [string Reason]";
-COMMAND.tip = "Make someone their datafile (un)restricted.";
-COMMAND.arguments = 1;
-COMMAND.optionalArguments = 1;
+local COMMAND = cw.command:New("RestrictDatafile")
+COMMAND.text = "#datafile_command_restrictdatafile_syntax"
+COMMAND.tip = "#datafile_command_restrictdatafile_tip"
+COMMAND.arguments = 1
+COMMAND.optionalArguments = 1
 
 function COMMAND:OnRun(player, arguments)
-    local target = Clockwork.player:FindByID(arguments[1]);
-    local text = table.concat(arguments, " ", 2);
+    local target = _player.Find(arguments[1])
+    local text = table.concat(arguments, " ", 2)
 
     if (!text or text == "") then
-    	text = nil;
-    end;
+    	text = nil
+    end
 
     if (target) then
     	if (cwDatafile:ReturnPermission(player) >= DATAFILE_PERMISSION_FULL) then
     		if (text) then
-	        	cwDatafile:SetRestricted(true, text, target, player);
+	        	cwDatafile:SetRestricted(true, text, target, player)
+				local langrestricted = true
 
-	        	Clockwork.player:Notify(player, target:Name() .. "'s file has been restricted.");
+	        	cw.player:Notify(player, L("#datafile_command_restrictdatafile_notify", target:Name(), (langrestricted and L"#datafile_restricted" or L"#datafile_unrestricted")))
     		else
-	        	cwDatafile:SetRestricted(false, "", target, player);
+	        	cwDatafile:SetRestricted(false, "", target, player)
+				local langrestricted = false
 
-	        	Clockwork.player:Notify(player, target:Name() .. "'s file has been unrestricted.");
-    		end;
+	        	cw.player:Notify(player, L("#datafile_command_restrictdatafile_notify", target:Name(), (langrestricted and L"#datafile_restricted" or L"#datafile_unrestricted")))
+    		end
 	    else
-	    	Clockwork.player:Notify(player, "You do not have access to this command.");
-	    end;
+	    	cw.player:Notify(player, L"#datafile_command_restrictdatafile_err1")
+	    end
     else
-        Clockwork.player:Notify(player, "You have entered an invalid character.");
-    end;
-end;
+        cw.player:Notify(player, L"#datafile_command_restrictdatafile_err2")
+    end
+end
 
-COMMAND:Register();
+COMMAND:Register()

@@ -48,31 +48,31 @@ function PANEL:Init()
 
     -- Upper buttons. Population will be done below.
     self.uLeftButton = vgui.Create("cwDfButton", self.uButtons);
-    self.uLeftButton:SetText("ADD NOTE");
+    self.uLeftButton:SetText(L"#datafile_derma_fulldatafile_upper_button_1");
     self.uLeftButton:SetMetroColor(colours.blue);
     self.uLeftButton:Dock(LEFT);
 
     self.uMiddleButton = vgui.Create("cwDfButton", self.uButtons);
-    self.uMiddleButton:SetText("ADD CIVIL RECORD");
+    self.uMiddleButton:SetText(L"#datafile_derma_fulldatafile_upper_button_2");
     self.uMiddleButton:SetMetroColor(colours.red);
     self.uMiddleButton:Dock(FILL);
 
     self.uRightButton = vgui.Create("cwDfButton", self.uButtons);
-    self.uRightButton:SetText("ADD MEDICAL RECORD");
+    self.uRightButton:SetText(L"#datafile_derma_fulldatafile_upper_button_3");
     self.uRightButton:SetMetroColor(colours.green);
     self.uRightButton:Dock(RIGHT);
 
     -- Bottom buttons.
     self.dLeftButton = vgui.Create("cwDfButton", self.dButtons);
-    self.dLeftButton:SetText("UPDATE LAST SEEN");
+    self.dLeftButton:SetText(L"#datafile_derma_fulldatafile_bottom_button_1");
     self.dLeftButton:Dock(LEFT);
 
     self.dMiddleButton = vgui.Create("cwDfButton", self.dButtons);
-    self.dMiddleButton:SetText("CHANGE CIVIL STATUS");
+    self.dMiddleButton:SetText(L"#datafile_derma_fulldatafile_bottom_button_2");
     self.dMiddleButton:Dock(FILL);
 
     self.dRightButton = vgui.Create("cwDfButton", self.dButtons);
-    self.dRightButton:SetText("ADD BOL");
+    self.dRightButton:SetText(L"#datafile_derma_fulldatafile_bottom_button_3");
     self.dRightButton:Dock(RIGHT);
 
     self.DoClose = function()
@@ -113,13 +113,13 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
     local lastSeen = GenericData.lastSeen
     local points = 0;
 
-    self:SetTitle(target:Name() .. "'s Datafile");
+    self:SetTitle(L("#datafile_derma_title", target:Name()));
 
     -- The logic here can be done far better.
     if (bIsCombine) then
         points = GenericData.sc;
 
-        self.InfoPanel.MiddleHeaderLabel:SetText("CREDITS");
+        self.InfoPanel.MiddleHeaderLabel:SetText(L"#datafile_derma_fulldatafile_credits");
         self.InfoPanel:SetInfoText(civilStatus, points, lastSeen);
     else
         points = GenericData.points;
@@ -132,10 +132,10 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
 
     if (bHasBOL) then
         self.Status = "yellow";
-        self.dRightButton:SetText("REMOVE BOL");
+        self.dRightButton:SetText(L"#datafile_derma_fulldatafile_right_button_1");
     else
         self.Status = "";
-        self.dRightButton:SetText("ADD BOL")
+        self.dRightButton:SetText(L"#datafile_derma_fulldatafile_right_button_2")
     end;
 
     if (bIsAntiCitizen) then
@@ -147,12 +147,12 @@ function PANEL:PopulateGenericData(target, datafile, GenericData)
     self.NameLabel:SetText(target:Name());
 
     self.dRightButton.DoClick = function()
-        Clockwork.datastream:Start("SetBOL", {target});
+        netstream.Start("SetBOL", {target});
         cwDatafile:Refresh(target);
     end;
 
     self.dLeftButton.DoClick = function()
-        Clockwork.datastream:Start("UpdateLastSeen", {target});
+        netstream.Start("UpdateLastSeen", {target});
         cwDatafile:Refresh(target);
     end;
 
@@ -273,7 +273,7 @@ function PANEL:Init()
     self:SetTall(35);
 
     self.Header1 = vgui.Create("DLabel", self);
-    self.Header1:SetText("NOTES");
+    self.Header1:SetText(L"#datafile_derma_fulldatafile_header_notes");
     self.Header1:SetTextColor(colours.blue);
     self.Header1:SetFont("MiddleLabels");
     self.Header1:Dock(FILL);
@@ -281,7 +281,7 @@ function PANEL:Init()
     self.Header1:SetContentAlignment(4);
 
     self.Header2 = vgui.Create("DLabel", self);
-    self.Header2:SetText("CIVIL RECORD");
+    self.Header2:SetText(L"#datafile_derma_fulldatafile_header_civil_record");
     self.Header2:SetTextColor(colours.red);
     self.Header2:SetFont("MiddleLabels");
     self.Header2:Dock(FILL);
@@ -289,7 +289,7 @@ function PANEL:Init()
     self.Header2:SetContentAlignment(5);
 
     self.Header3 = vgui.Create("DLabel", self);
-    self.Header3:SetText("MEDICAL RECORD");
+    self.Header3:SetText(L"#datafile_derma_fulldatafile_header_medical_record");
     self.Header3:SetTextColor(colours.green);
     self.Header3:SetFont("MiddleLabels");
     self.Header3:Dock(FILL);
@@ -490,7 +490,7 @@ function PANEL:Init()
     self:SetTall(50);
 
     self.LeftHeaderLabel = vgui.Create("DLabel", self);
-    self.LeftHeaderLabel:SetText("CIVIL STATUS");
+    self.LeftHeaderLabel:SetText(L"#datafile_derma_fulldatafile_info_civil_status");
     self.LeftHeaderLabel:SetContentAlignment(4)
     self.LeftHeaderLabel:SetTextColor(Color(0, 150, 150, 255));
     self.LeftHeaderLabel:SetFont("TopBoldLabel");
@@ -498,7 +498,7 @@ function PANEL:Init()
     self.LeftHeaderLabel:DockMargin(5, 5, 0, 0);
 
     self.MiddleHeaderLabel = vgui.Create("DLabel", self);
-    self.MiddleHeaderLabel:SetText("POINTS");
+    self.MiddleHeaderLabel:SetText(L"#datafile_derma_fulldatafile_info_points");
     self.MiddleHeaderLabel:SetContentAlignment(5)
     self.MiddleHeaderLabel:SetTextColor(Color(231, 76, 60, 255));
     self.MiddleHeaderLabel:SetFont("TopBoldLabel");
@@ -506,7 +506,7 @@ function PANEL:Init()
     self.MiddleHeaderLabel:DockMargin(5, 5, 0, 0);
 
     self.RightHeaderLabel = vgui.Create("DLabel", self);
-    self.RightHeaderLabel:SetText("LAST SEEN");
+    self.RightHeaderLabel:SetText(L"#datafile_derma_fulldatafile_info_last_seen");
     self.RightHeaderLabel:SetContentAlignment(6)
     self.RightHeaderLabel:SetTextColor(Color(150, 150, 96, 255));
     self.RightHeaderLabel:SetFont("TopBoldLabel");

@@ -4,7 +4,7 @@ local PLUGIN = PLUGIN;
 local PANEL = {};
 
 function PANEL:Init()
-	self:SetTitle("Add Civil Record");
+	self:SetTitle(L"#datafile_derma_misc_title_add_civil_record");
 	self:MakePopup();
 	
 	self:SetSize(300, 250);
@@ -22,7 +22,7 @@ function PANEL:Init()
 	self.Number:DockMargin(0, 2.5, 0, 2.5);
 
 	self.Submit = vgui.Create("cwDfButton", self);
-	self.Submit:SetText("Submit")
+	self.Submit:SetText(L"#datafile_derma_misc_submit")
 	self.Submit:SetZPos(-1)
 	self.Submit:Dock(BOTTOM);
 	self.Submit:DockMargin(0, 2.5, 0, 2.5);
@@ -35,7 +35,7 @@ function PANEL:SendInformation(target)
 		local text = self.Entry:GetText();
 		local points = self.Number:GetValue();
 
-		Clockwork.datastream:Start("AddDatafileEntry", {target, category, text, points});
+		netstream.Start("AddDatafileEntry", {target, category, text, points});
 		
 		cwDatafile:Refresh(target);
 		self:Close();
@@ -56,7 +56,7 @@ vgui.Register("cwDfCivilEntry", PANEL, "DFrame");
 local PANEL = {};
 
 function PANEL:Init()
-	self:SetTitle("Add Medical Record");
+	self:SetTitle(L"#datafile_derma_misc_title_add_med_record");
 	self:MakePopup();
 	
 	self:SetSize(300, 250);
@@ -70,7 +70,7 @@ function PANEL:Init()
 	self.Entry:DockMargin(0, 0, 0, 2.5);
 
 	self.Submit = vgui.Create("cwDfButton", self);
-	self.Submit:SetText("Submit")
+	self.Submit:SetText(L"#datafile_derma_misc_submit")
 	self.Submit:Dock(BOTTOM);
 	self.Submit:DockMargin(0, 2.5, 0, 2.5);
 	self.Submit:SetMetroColor(Color(39, 174, 96, 100));
@@ -81,7 +81,7 @@ function PANEL:SendInformation(target)
 		local category = "med";
 		local text = self.Entry:GetText();
 		
-		Clockwork.datastream:Start("AddDatafileEntry", {target, category, text, "0"});
+		netstream.Start("AddDatafileEntry", {target, category, text, "0"});
 		
 		cwDatafile:Refresh(target);
 		self:Close();
@@ -102,7 +102,7 @@ vgui.Register("cwDfMedicalEntry", PANEL, "DFrame");
 local PANEL = {};
 
 function PANEL:Init()
-	self:SetTitle("Add Note");
+	self:SetTitle(L"#datafile_derma_misc_title_add_note");
 	self:MakePopup();
 	
 	self:SetSize(300, 250);
@@ -116,7 +116,7 @@ function PANEL:Init()
 	self.Entry:DockMargin(0, 0, 0, 2.5);
 
 	self.Submit = vgui.Create("cwDfButton", self);
-	self.Submit:SetText("Submit")
+	self.Submit:SetText(L"#datafile_derma_misc_submit")
 	self.Submit:Dock(BOTTOM);
 	self.Submit:DockMargin(0, 2.5, 0, 2.5);
 	self.Submit:SetMetroColor(Color(41, 128, 185, 100));
@@ -127,7 +127,7 @@ function PANEL:SendInformation(target)
 		local category = "union";
 		local text = self.Entry:GetText();
 
-		Clockwork.datastream:Start("AddDatafileEntry", {target, category, text, "0"});		
+		netstream.Start("AddDatafileEntry", {target, category, text, "0"});		
 		
 		cwDatafile:Refresh(target);
 		self:Close();

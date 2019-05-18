@@ -1,10 +1,10 @@
 local PLUGIN = PLUGIN;
 
-Clockwork.config:Add("mysql_datafile_table", "datafile", nil, nil, true, true, true);
+cw.config:Add("mysql_datafile_table", "datafile", nil, nil, true, true, true);
 
 -- Update the player their datafile.
 function cwDatafile:UpdateDatafile(player, GenericData, datafile)
-	/* Datafile structure:
+	--[[ Datafile structure:
 		table to JSON encoded with CW function:
 		_GenericData = {
 			bol = {false, ""},
@@ -24,11 +24,11 @@ function cwDatafile:UpdateDatafile(player, GenericData, datafile)
 				poster = {charName, steamID, color},
 			},
 		};
-	*/
+	--]]
 
 	if (IsValid(player)) then
-		local schemaFolder = Clockwork.kernel:GetSchemaFolder();
-		local datafileTable = Clockwork.config:Get("mysql_datafile_table"):Get();
+		local schemaFolder = cw.core:GetSchemaFolder();
+		local datafileTable = cw.config:Get("mysql_datafile_table"):Get();
 		local character = player:GetCharacter();
 
 		-- Update all the values of a player.
@@ -37,9 +37,9 @@ function cwDatafile:UpdateDatafile(player, GenericData, datafile)
 			updateObj:Where("_SteamID", player:SteamID());
 			updateObj:Where("_Schema", schemaFolder);
 			updateObj:Update("_CharacterName", character.name);
-			updateObj:Update("_GenericData", Clockwork.json:Encode(GenericData));
-			updateObj:Update("_Datafile", Clockwork.json:Encode(datafile));
-		updateObj:ExecutePool(Clockwork.pool);
+			updateObj:Update("_GenericData", cw.json:Encode(GenericData));
+			updateObj:Update("_Datafile", cw.json:Encode(datafile));
+		updateObj:ExecutePool(cw.pool);
 
 		self:LoadDatafile(player);
 	end;
@@ -77,7 +77,7 @@ function cwDatafile:AddEntry(category, text, points, player, poster, bCommand)
 	-- Update the player their file with the new entry and possible points addition.
 	self:UpdateDatafile(player, GenericData, datafile);
 
-	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has added an entry to " .. player:Name() .. "'s datafile with category: " .. category);
+	cw.core:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has added an entry to " .. player:Name() .. "'s datafile with category: " .. category);
 end;
 
 -- Set a player their Civil Status.
@@ -92,7 +92,7 @@ function cwDatafile:SetCivilStatus(player, poster, civilStatus)
 	self:AddEntry("union", poster:GetCharacter().name .. " has changed " .. player:GetCharacter().name .. "'s Civil Status to: " .. civilStatus, 0, player, poster);
 	self:UpdateDatafile(player, GenericData, datafile);
 
-	Clockwork.kernel:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
+	cw.core:PrintLog(LOGTYPE_MINOR, poster:Name() .. " has changed " .. player:Name() .. "'s Civil Status to: " .. civilStatus);
 end;
 
 -- Clear a character's datafile.
@@ -125,14 +125,14 @@ function cwDatafile:SetBOL(bBOL, text, player, poster)
 		GenericData.bol[1] = true;
 		GenericData.bol[2] = text;
 
-		self:AddEntry("union", poster:GetCharacter().name .. " has put a bol on " .. player:GetCharacter().name, 0, player, poster);
+		self:AddEntry("union", L("#datafile_entry_1", poster:GetCharacter().name, player:GetCharacter().name), 0, player, poster);
 
 	else
 		-- remove the BOL, get rid of the text
 		GenericData.bol[1] = false;
 		GenericData.bol[2] = "";
 
-		self:AddEntry("union", poster:GetCharacter().name .. " has removed a bol on " .. player:GetCharacter().name, 0, player, poster);
+		self:AddEntry("union", L("#datafile_entry_2", poster:GetCharacter().name, player:GetCharacter().name), 0, player, poster);
 	end;
 
 	self:UpdateDatafile(player, GenericData, datafile);
@@ -148,13 +148,13 @@ function cwDatafile:SetRestricted(bRestricted, text, player, poster)
 		GenericData.restricted[1] = true;
 		GenericData.restricted[2] = text;
 
-		self:AddEntry("civil", poster:GetCharacter().name .. " has made " .. player:GetCharacter().name .. "'s file restricted.", 0, player, poster);
+		self:AddEntry("civil", L("#datafile_entry_3", poster:GetCharacter().name, player:GetCharacter().name), 0, player, poster);
 	else
 		-- make the file unrestricted, set text to ""
 		GenericData.restricted[1] = false;
 		GenericData.restricted[2] = "";
 
-		self:AddEntry("civil", poster:GetCharacter().name .. " has removed the restriction on " .. player:GetCharacter().name .. "'s file.", 0, player, poster);
+		self:AddEntry("civil", L("#datafile_entry_4", poster:GetCharacter().name, player:GetCharacter().name), 0, player, poster);
 	end;
 
 	self:UpdateDatafile(player, GenericData, datafile);
@@ -170,7 +170,7 @@ function cwDatafile:RemoveEntry(player, target, key, date, category, text)
 
 		self:UpdateDatafile(target, GenericData, datafile);
 
-		Clockwork.kernel:PrintLog(LOGTYPE_MINOR, player:Name() .. " has removed an entry of " .. target:Name() .. "'s datafile with category: " .. category);
+		cw.core:PrintLog(LOGTYPE_MINOR, player:Name() .. " has removed an entry of " .. target:Name() .. "'s datafile with category: " .. category);
 	end;
 end;
 
@@ -237,7 +237,7 @@ end;
 
 -- If the player is apart of any of the factions allowing a datafile, return false.
 function cwDatafile:IsRestrictedFaction(player)
-	local factionTable = Clockwork.faction:FindByID(player:GetFaction());
+	local factionTable = _faction.FindByID(player:GetFaction());
 
 	if (factionTable.bAllowDatafile) then
 		return false;

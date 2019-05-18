@@ -41,7 +41,7 @@ function PANEL:Paint(w, h)
 end;
 
 function PANEL:PopulateEntries(target, datafile)
-	self:SetTitle(target:Name() .. "'s datafile");
+	self:SetTitle(L("#datafile_derma_title", target:Name()));
 
 	for k, v in pairs(datafile) do
 		local line = self.List:AddLine(

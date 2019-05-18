@@ -1,19 +1,20 @@
-local Clockwork = Clockwork;
+local cw, cwDatafile = cw, cwDatafile
 
-local COMMAND = Clockwork.command:New("ClearDatafile");
-COMMAND.text = "<string Name>";
-COMMAND.tip = "Scrub someone their datafile.";
-COMMAND.access = "s";
-COMMAND.arguments = 1;
+local COMMAND = cw.command:New("ClearDatafile")
+COMMAND.text = "#datafile_command_cleardatafile_syntax"
+COMMAND.tip = "#datafile_command_cleardatafile_tip"
+COMMAND.access = "s"
+COMMAND.arguments = 1
 
 function COMMAND:OnRun(player, arguments)
-    local target = Clockwork.player:FindByID(table.concat(arguments, " "));
+    local target = _player.Find((table.concat(arguments, " ")))
 
     if (target) then
-        cwDatafile:ClearDatafile(target);
+        cwDatafile:ClearDatafile(target)
     else
-        Clockwork.player:Notify(player, "You have entered an invalid character.");
-    end;
-end;
+        cw.player:Notify(player, L"#datafile_command_cleardatafile_err1")
+    end
+end
 
 COMMAND:Register();
+

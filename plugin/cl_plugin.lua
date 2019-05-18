@@ -29,12 +29,12 @@ local colours = {
 
 -- Remove an entry, send extra data for validation purposes.
 function cwDatafile:RemoveEntry(target, key, date, category, text)
-	Clockwork.datastream:Start("RemoveDatafileLine", {target, key, date, category, text});
+	netstream.Start("RemoveDatafileLine", {target, key, date, category, text});
 end;
 
 -- Update a player their Civil Status.
 function cwDatafile:UpdateCivilStatus(target, tier)
-	Clockwork.datastream:Start("UpdateCivilStatus", {target, tier});
+	netstream.Start("UpdateCivilStatus", {target, tier});
 	self:Refresh(target);
 end;
 
@@ -42,6 +42,6 @@ end;
 function cwDatafile:Refresh(target)
 	timer.Simple(0.05, function()
 		PLUGIN.Datafile:Close();
-		Clockwork.datastream:Start("RefreshDatafile", {target});
+		netstream.Start("RefreshDatafile", {target});
 	end);
 end;

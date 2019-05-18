@@ -2,10 +2,10 @@ local PLUGIN = PLUGIN;
 
 PLUGIN:SetGlobalAlias("cwDatafile");
 
-Clockwork.kernel:IncludePrefixed("cl_plugin.lua");
-Clockwork.kernel:IncludePrefixed("cl_hooks.lua");
-Clockwork.kernel:IncludePrefixed("sv_plugin.lua");
-Clockwork.kernel:IncludePrefixed("sv_hooks.lua");
+cw.core:IncludePrefixed("cl_plugin.lua");
+cw.core:IncludePrefixed("cl_hooks.lua");
+cw.core:IncludePrefixed("sv_plugin.lua");
+cw.core:IncludePrefixed("sv_hooks.lua");
 
 -- All the categories possible. Yes, the names are quite annoying.
 PLUGIN.Categories = {
